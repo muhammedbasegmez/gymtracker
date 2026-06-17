@@ -156,6 +156,23 @@ body{
 .delta-up{color:var(--green);font-size:10px;font-weight:700;}
 .delta-down{color:var(--red);font-size:10px;font-weight:700;}
 
+/* SET INPUT — PR / düşüş renklendirmesi */
+.set-input.pr { border-color:var(--green-border) !important; background:rgba(61,220,132,.07) !important; color:var(--green) !important; }
+.set-input.drop { border-color:var(--red-border) !important; background:rgba(255,77,94,.06) !important; }
+
+/* EXERCISE CARD — sol kenar PR çizgisi */
+.exercise-card.card-pr  { border-left:3px solid var(--green); }
+.exercise-card.card-drop{ border-left:3px solid var(--red); }
+
+/* PR ROZET */
+.pr-badge{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px;
+  letter-spacing:.3px;text-transform:uppercase;flex-shrink:0;
+}
+.pr-badge.up  { background:var(--green-dim);color:var(--green);border:1px solid var(--green-border); }
+.pr-badge.down{ background:var(--red-dim);color:var(--red);border:1px solid var(--red-border); }
+
 /* COMPLETE */
 .complete-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:calc(100% - 32px);margin:6px 16px 0;padding:15px;background:var(--accent);border:none;border-radius:var(--radius);font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;color:#000;cursor:pointer;}
 .complete-btn:active{opacity:.8;}
@@ -575,16 +592,27 @@ function renderExCard(ex, dateS, w) {
   </div>`;
 
   let setsHtml = '';
+  let cardPrState = null; // 'up' | 'down' | null — en az bir set PR mı düşüş mü
+
   sets.forEach((set, i) => {
     const prevS = prevSets ? prevSets[i] : null;
     const ghostKg  = (prevS && prevS.kg !== '' && set.kg === '') ? prevS.kg : '';
     const ghostRps = (prevS && prevS.reps !== '' && (set.reps === '' || set.reps === undefined)) ? prevS.reps : '';
 
+    // Delta hesabı — hem görsel hem kart durumu için
     let delta = '';
+    let kgClass = '';
     if (prevS && set.kg !== '' && prevS.kg !== '') {
       const d = parseFloat(set.kg) - parseFloat(prevS.kg);
-      if (d > 0) delta = `<span class="delta-up"> ▲${d}</span>`;
-      else if (d < 0) delta = `<span class="delta-down"> ▼${Math.abs(d)}</span>`;
+      if (d > 0) {
+        delta = `<span class="delta-up">▲${d}</span>`;
+        kgClass = 'pr';
+        if (cardPrState !== 'down') cardPrState = 'up';
+      } else if (d < 0) {
+        delta = `<span class="delta-down">▼${Math.abs(d)}</span>`;
+        kgClass = 'drop';
+        cardPrState = 'down';
+      }
     }
 
     const numLabel = set.isDS
@@ -595,12 +623,12 @@ function renderExCard(ex, dateS, w) {
     <div class="set-row" id="sr_${dateS}_${ex.id}_${i}">
       ${numLabel}
       <div class="set-input-wrap col-kg">
-        <input class="set-input" type="number" inputmode="decimal"
+        <input class="set-input${kgClass ? ' '+kgClass : ''}" type="number" inputmode="decimal"
           value="${set.kg}" placeholder=""
           data-d="${dateS}" data-e="${ex.id}" data-i="${i}" data-f="kg"
           oninput="onInput(this)" onfocus="onFocus(this)">
         ${ghostKg ? `<div class="set-ghost-val">${ghostKg}</div>` : ''}
-        ${delta ? `<div style="position:absolute;bottom:-13px;left:0;right:0;text-align:center;">${delta}</div>` : ''}
+        ${delta ? `<div style="position:absolute;bottom:-13px;left:0;right:0;text-align:center;font-size:10px;">${delta}</div>` : ''}
       </div>
       <div class="set-input-wrap col-reps">
         <input class="set-input" type="number" inputmode="numeric"
@@ -621,8 +649,16 @@ function renderExCard(ex, dateS, w) {
     </div>`;
   });
 
+  // Kart seviyesi PR rozeti
+  const cardClass = cardPrState === 'up' ? 'card-pr' : cardPrState === 'down' ? 'card-drop' : '';
+  const prBadge = cardPrState === 'up'
+    ? `<span class="pr-badge up">▲ PR</span>`
+    : cardPrState === 'down'
+    ? `<span class="pr-badge down">▼ Düşük</span>`
+    : '';
+
   return `
-  <div class="exercise-card" id="exc_${ex.id}" data-exid="${ex.id}">
+  <div class="exercise-card ${cardClass}" id="exc_${ex.id}" data-exid="${ex.id}">
     <div class="exercise-header">
       <div class="drag-handle" title="Sırayı değiştir">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -638,6 +674,7 @@ function renderExCard(ex, dateS, w) {
         <div class="exercise-name">${ex.name}</div>
       </div>
       <div class="exercise-hdr-actions">
+        ${prBadge}
         <button class="btn-icon" onclick="toggleNote('${ex.id}')" title="Not">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
             stroke="${noteValue ? 'var(--accent)' : 'currentColor'}" stroke-width="2">
@@ -671,6 +708,20 @@ const _timers = {};
 function onInput(el) {
   const ghost = el.parentElement.querySelector('.set-ghost-val');
   if (ghost) ghost.style.opacity = el.value ? '0' : '0.5';
+
+  // KG alanında anlık renklendirme
+  if (el.dataset.f === 'kg') {
+    const d = el.dataset.d, e = el.dataset.e, i = +el.dataset.i;
+    const prevSets = getPrevSets(e, d);
+    const prevS = prevSets ? prevSets[i] : null;
+    el.classList.remove('pr', 'drop');
+    if (prevS && el.value !== '' && prevS.kg !== '') {
+      const diff = parseFloat(el.value) - parseFloat(prevS.kg);
+      if (diff > 0) el.classList.add('pr');
+      else if (diff < 0) el.classList.add('drop');
+    }
+  }
+
   const k = `${el.dataset.d}_${el.dataset.e}_${el.dataset.i}_${el.dataset.f}`;
   clearTimeout(_timers[k]);
   _timers[k] = setTimeout(() => commitSet(el.dataset.d, el.dataset.e, +el.dataset.i, el.dataset.f, el.value), 500);
