@@ -592,26 +592,44 @@ function renderExCard(ex, dateS, w) {
   </div>`;
 
   let setsHtml = '';
-  let cardPrState = null; // 'up' | 'down' | null — en az bir set PR mı düşüş mü
+  let cardPrState = null; // 'up' | 'down' | null
+
+  // Kart seviyesi: toplam hacim karşılaştırması
+  const prevVol = prevSets
+    ? prevSets.reduce((a,s) => a + (parseFloat(s.kg)||0)*(parseFloat(s.reps)||0), 0)
+    : 0;
+  const curVol = sets.reduce((a,s) => a + (parseFloat(s.kg)||0)*(parseFloat(s.reps)||0), 0);
+  if (prevVol > 0 && curVol > 0) {
+    cardPrState = curVol > prevVol ? 'up' : curVol < prevVol ? 'down' : null;
+  }
+
+  // Epley 1RM tahmini: kg × (1 + reps/30)
+  function epley(kg, reps) {
+    const k = parseFloat(kg), r = parseFloat(reps);
+    if (!k || !r || r <= 0) return 0;
+    return k * (1 + r / 30);
+  }
 
   sets.forEach((set, i) => {
     const prevS = prevSets ? prevSets[i] : null;
     const ghostKg  = (prevS && prevS.kg !== '' && set.kg === '') ? prevS.kg : '';
     const ghostRps = (prevS && prevS.reps !== '' && (set.reps === '' || set.reps === undefined)) ? prevS.reps : '';
 
-    // Delta hesabı — hem görsel hem kart durumu için
+    // Set bazında: 1RM karşılaştırması
     let delta = '';
     let kgClass = '';
-    if (prevS && set.kg !== '' && prevS.kg !== '') {
-      const d = parseFloat(set.kg) - parseFloat(prevS.kg);
-      if (d > 0) {
-        delta = `<span class="delta-up">▲${d}</span>`;
+    const cur1RM  = epley(set.kg, set.reps);
+    const prev1RM = prevS ? epley(prevS.kg, prevS.reps) : 0;
+
+    if (cur1RM > 0 && prev1RM > 0) {
+      const diff = cur1RM - prev1RM;
+      const sign = diff > 0 ? '+' : '';
+      if (diff > 0) {
+        delta = `<span class="delta-up">▲ 1RM +${diff.toFixed(1)}</span>`;
         kgClass = 'pr';
-        if (cardPrState !== 'down') cardPrState = 'up';
-      } else if (d < 0) {
-        delta = `<span class="delta-down">▼${Math.abs(d)}</span>`;
+      } else if (diff < 0) {
+        delta = `<span class="delta-down">▼ 1RM ${diff.toFixed(1)}</span>`;
         kgClass = 'drop';
-        cardPrState = 'down';
       }
     }
 
@@ -649,13 +667,15 @@ function renderExCard(ex, dateS, w) {
     </div>`;
   });
 
-  // Kart seviyesi PR rozeti
+  // Kart seviyesi rozet — hacim farkı % olarak
   const cardClass = cardPrState === 'up' ? 'card-pr' : cardPrState === 'down' ? 'card-drop' : '';
-  const prBadge = cardPrState === 'up'
-    ? `<span class="pr-badge up">▲ PR</span>`
-    : cardPrState === 'down'
-    ? `<span class="pr-badge down">▼ Düşük</span>`
-    : '';
+  let prBadge = '';
+  if (prevVol > 0 && curVol > 0) {
+    const pct = ((curVol - prevVol) / prevVol * 100);
+    const sign = pct > 0 ? '+' : '';
+    if (pct > 0)      prBadge = `<span class="pr-badge up">▲ ${sign}${pct.toFixed(0)}% hacim</span>`;
+    else if (pct < 0) prBadge = `<span class="pr-badge down">▼ ${pct.toFixed(0)}% hacim</span>`;
+  }
 
   return `
   <div class="exercise-card ${cardClass}" id="exc_${ex.id}" data-exid="${ex.id}">
@@ -709,16 +729,29 @@ function onInput(el) {
   const ghost = el.parentElement.querySelector('.set-ghost-val');
   if (ghost) ghost.style.opacity = el.value ? '0' : '0.5';
 
-  // KG alanında anlık renklendirme
-  if (el.dataset.f === 'kg') {
+  // KG veya reps değişince anlık 1RM renklendirmesi
+  if (el.dataset.f === 'kg' || el.dataset.f === 'reps') {
     const d = el.dataset.d, e = el.dataset.e, i = +el.dataset.i;
-    const prevSets = getPrevSets(e, d);
-    const prevS = prevSets ? prevSets[i] : null;
-    el.classList.remove('pr', 'drop');
-    if (prevS && el.value !== '' && prevS.kg !== '') {
-      const diff = parseFloat(el.value) - parseFloat(prevS.kg);
-      if (diff > 0) el.classList.add('pr');
-      else if (diff < 0) el.classList.add('drop');
+    const row = db.workouts[d]?.sets[e]?.[i];
+    const prevSetsRow = getPrevSets(e, d);
+    const prevS = prevSetsRow ? prevSetsRow[i] : null;
+
+    // Anlık değerleri oku (henüz commit olmadı, DOM'dan al)
+    const setRow = document.getElementById(`sr_${d}_${e}_${i}`);
+    const kgEl   = setRow?.querySelector('[data-f="kg"]');
+    const rpsEl  = setRow?.querySelector('[data-f="reps"]');
+    const curKg  = kgEl  ? parseFloat(kgEl.value)  : 0;
+    const curRps = rpsEl ? parseFloat(rpsEl.value) : 0;
+
+    const cur1RM  = (curKg > 0 && curRps > 0) ? curKg * (1 + curRps / 30) : 0;
+    const prev1RM = prevS ? (parseFloat(prevS.kg)||0) * (1 + (parseFloat(prevS.reps)||0) / 30) : 0;
+
+    if (kgEl) {
+      kgEl.classList.remove('pr', 'drop');
+      if (cur1RM > 0 && prev1RM > 0) {
+        if (cur1RM > prev1RM) kgEl.classList.add('pr');
+        else if (cur1RM < prev1RM) kgEl.classList.add('drop');
+      }
     }
   }
 
