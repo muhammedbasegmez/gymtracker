@@ -21,15 +21,17 @@
   --text:#F2F2F2;--text2:#A0A0B8;--text3:#5A5A78;
   --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.04);
   --radius:14px;
-  --safe-t:env(safe-area-inset-top,0px);
-  --safe-b:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html{height:100%;height:-webkit-fill-available;}
+html{
+  height:100%;
+  height:-webkit-fill-available;
+}
 body{
   display:flex;flex-direction:column;
   background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
   overflow:hidden;
+  /* Cascade: modern → fallback */
   height:100vh;
   height:100dvh;
   height:-webkit-fill-available;
@@ -41,16 +43,19 @@ body{
   background:var(--card);
   border-top:1px solid var(--border);
   padding-top:10px;
-  padding-bottom:max(var(--safe-b), 16px);
-  padding-left:env(safe-area-inset-left);
-  padding-right:env(safe-area-inset-right);
+  /* iOS home indicator safe area */
+  padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 8px);
+  padding-left:env(safe-area-inset-left, 0px);
+  padding-right:env(safe-area-inset-right, 0px);
 }
 .nav-btn{
   flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
   padding:8px 4px;background:none;border:none;
   color:var(--text3);font-size:10px;font-family:'Inter',sans-serif;
   font-weight:600;letter-spacing:.4px;text-transform:uppercase;
-  cursor:pointer;transition:color .15s;min-height:44px;
+  cursor:pointer;transition:color .15s;
+  /* Apple HIG minimum touch target */
+  min-height:44px;min-width:44px;
 }
 .nav-btn.active{color:var(--accent);}
 .nav-btn svg{width:24px;height:24px;stroke-width:1.8;}
@@ -68,10 +73,10 @@ body{
 
 /* HEADER */
 .screen-header{
-  padding-top:calc(var(--safe-t) + 14px);
+  padding-top:calc(env(safe-area-inset-top, 0px) + 14px);
   padding-bottom:10px;
-  padding-left:max(16px, env(safe-area-inset-left));
-  padding-right:max(16px, env(safe-area-inset-right));
+  padding-left:calc(env(safe-area-inset-left, 0px) + 16px);
+  padding-right:calc(env(safe-area-inset-right, 0px) + 16px);
   display:flex;align-items:center;justify-content:space-between;
   position:sticky;top:0;z-index:20;
   background:var(--bg);border-bottom:1px solid var(--border2);
@@ -247,7 +252,7 @@ body{
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(5px);}
 .modal-overlay.hidden{display:none;}
-.modal{background:var(--card);border-radius:20px 20px 0 0;padding:20px 16px calc(20px + var(--safe-b));width:100%;max-width:480px;max-height:85vh;overflow-y:auto;}
+.modal{background:var(--card);border-radius:20px 20px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom, 0px));width:100%;max-width:480px;max-height:85vh;overflow-y:auto;}
 .modal-handle{width:38px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;}
 .modal-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.5px;margin-bottom:14px;}
 .modal-input{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:13px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:16px;outline:none;margin-bottom:10px;}
@@ -262,7 +267,7 @@ body{
 .rpe-clear{width:100%;padding:11px;border-radius:9px;background:var(--card3);border:1px solid var(--border);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;margin-top:4px;font-family:'Inter',sans-serif;}
 
 /* TOAST */
-#toast{position:fixed;top:calc(var(--safe-t) + 56px);left:50%;transform:translateX(-50%) translateY(-10px);background:var(--card3);border:1px solid var(--border);border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:all .2s;pointer-events:none;white-space:nowrap;color:var(--text);}
+#toast{position:fixed;top:calc(env(safe-area-inset-top, 0px) + 56px);left:50%;transform:translateX(-50%) translateY(-10px);background:var(--card3);border:1px solid var(--border);border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:all .2s;pointer-events:none;white-space:nowrap;color:var(--text);}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
 /* MISC */
