@@ -271,6 +271,23 @@ body{
 .empty-state{text-align:center;padding:56px 24px;color:var(--text2);}
 .empty-icon{font-size:44px;margin-bottom:14px;}
 .empty-text{font-size:14px;line-height:1.6;}
+/* MUSCLE MAP */
+.muscle-map-wrap{margin:0 16px 16px;background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:16px;}
+.muscle-map-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.5px;color:var(--text2);margin-bottom:4px;}
+.muscle-map-sub{font-size:11px;color:var(--text3);margin-bottom:14px;}
+.muscle-map-views{display:flex;gap:12px;justify-content:center;}
+.muscle-map-views svg{flex:1;max-width:160px;}
+.muscle-legend{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;justify-content:center;}
+.muscle-legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2);}
+.muscle-legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+.muscle-week-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px;}
+.muscle-week-label{font-size:12px;font-weight:600;color:var(--text);}
+.muscle-detail{margin-top:14px;display:flex;flex-direction:column;gap:6px;}
+.muscle-detail-row{display:flex;align-items:center;gap:8px;}
+.muscle-detail-name{font-size:12px;color:var(--text2);min-width:110px;}
+.muscle-detail-bar-bg{flex:1;background:var(--card2);border-radius:4px;height:7px;overflow:hidden;}
+.muscle-detail-bar{height:100%;border-radius:4px;transition:width .4s ease;}
+.muscle-detail-val{font-size:11px;font-weight:700;min-width:52px;text-align:right;color:var(--text);}
 </style>
 </head>
 <body>
@@ -355,6 +372,18 @@ const PROGRAM = [
     ]
   },
   {
+    id:'legs', name:'LEGS', type:'legs',
+    desc:'Master Bacak Rutini',
+    exercises:[
+      {id:'leg_press',       name:'Leg Press',              defSets:3, defReps:9},
+      {id:'hip_thrust',      name:'Hip Thrust Machine',     defSets:3, defReps:9},
+      {id:'leg_extension',   name:'Leg Extension',          defSets:4, defReps:13},
+      {id:'seated_leg_curl', name:'Seated Leg Curl',        defSets:4, defReps:11},
+      {id:'hip_adduction',   name:'Hip Adduction Machine',  defSets:3, defReps:13},
+      {id:'calf_raise',      name:'Seated Calf Raise',      defSets:4, defReps:15},
+    ]
+  },
+  {
     id:'push_b', name:'PUSH B', type:'push',
     desc:'Alt/İç Göğüs · Yan Omuz Hacim · Triceps Kalınlık',
     exercises:[
@@ -376,18 +405,6 @@ const PROGRAM = [
       {id:'face_pull',          name:'Face Pull (Kablo)',                 defSets:4, defReps:13},
       {id:'incline_db_curl',    name:'Incline Dumbbell Curl',            defSets:3, defReps:11},
       {id:'reverse_zbar',       name:'Reverse Grip Z-Bar Curl',          defSets:3, defReps:12},
-    ]
-  },
-  {
-    id:'legs', name:'LEGS', type:'legs',
-    desc:'Master Bacak Rutini',
-    exercises:[
-      {id:'leg_press',       name:'Leg Press',              defSets:3, defReps:9},
-      {id:'hip_thrust',      name:'Hip Thrust Machine',     defSets:3, defReps:9},
-      {id:'leg_extension',   name:'Leg Extension',          defSets:4, defReps:13},
-      {id:'seated_leg_curl', name:'Seated Leg Curl',        defSets:4, defReps:11},
-      {id:'hip_adduction',   name:'Hip Adduction Machine',  defSets:3, defReps:13},
-      {id:'calf_raise',      name:'Seated Calf Raise',      defSets:4, defReps:15},
     ]
   },
 ];
@@ -1135,9 +1152,16 @@ function renderProgress() {
     `<button class="prog-filter-btn${progFilter===f.id?' active':''}" onclick="setProgFilter('${f.id}')">${f.label}</button>`
   ).join('')}</div>
   <div class="prog-tabs">
-    <button class="prog-tab${progTab==='volume'?' active':''}" onclick="setProgTab('volume')">Toplam Hacim</button>
+    <button class="prog-tab${progTab==='muscle'?' active':''}" onclick="setProgTab('muscle')">Vücut Haritası</button>
+    <button class="prog-tab${progTab==='volume'?' active':''}" onclick="setProgTab('volume')">Hacim</button>
     <button class="prog-tab${progTab==='maxkg'?' active':''}" onclick="setProgTab('maxkg')">Max Kilo</button>
   </div>`;
+
+  // Vücut haritası sekmesi
+  if (progTab === 'muscle') {
+    content.innerHTML = html + renderMuscleMap();
+    return;
+  }
 
   const seenEx = new Set();
   PROGRAM.filter(p => p.type !== 'rest').forEach(prog => {
@@ -1219,7 +1243,210 @@ function renderProgress() {
 }
 
 function setProgFilter(f) { progFilter = f; renderProgress(); }
-function setProgTab(t) { progTab = t; renderProgress(); }
+function setProgTab(t) { progTab = t; muscleWeekOffset = 0; renderProgress(); }
+
+// ═══════════════════════════════════════════════
+// MUSCLE MAP
+// ═══════════════════════════════════════════════
+let muscleWeekOffset = 0; // 0 = bu hafta, -1 = geçen hafta vb.
+
+// Kas grubu → egzersiz ID eşleştirmesi
+const MUSCLE_MAP = {
+  chest_upper: { label:'Üst Göğüs',   exIds:['incline_press'], color:'#E8FF3A' },
+  chest_lower: { label:'Alt/İç Göğüs',exIds:['chest_press_mid','chest_press_lower','pec_deck_fly'], color:'#E8FF3A' },
+  front_delt:  { label:'Ön Omuz',     exIds:['seated_db_shoulder','incline_shoulder_machine'], color:'#FF9F43' },
+  side_delt:   { label:'Yan Omuz',    exIds:['cable_lateral_a','db_lateral'], color:'#FF9F43' },
+  rear_delt:   { label:'Arka Omuz',   exIds:['rev_pec_deck','face_pull'], color:'#A78BFA' },
+  triceps:     { label:'Triceps',     exIds:['triceps_rope','overhead_cable_tri','bar_pushdown','single_cable_pushdown'], color:'#FF9F43' },
+  lat:         { label:'Kanat (Lat)', exIds:['neutral_pulldown','wide_pulldown'], color:'#A78BFA' },
+  mid_back:    { label:'Orta Sırt',   exIds:['cable_row_v','single_arm_row','chest_row_machine','wide_cable_row'], color:'#A78BFA' },
+  biceps:      { label:'Biceps',      exIds:['zbar_curl','hammer_curl','incline_db_curl'], color:'#A78BFA' },
+  forearm:     { label:'Ön Kol',      exIds:['reverse_zbar'], color:'#A78BFA' },
+  quad:        { label:'Quadriceps',  exIds:['leg_press','leg_extension'], color:'#3DDC84' },
+  hamstring:   { label:'Hamstring',   exIds:['seated_leg_curl'], color:'#3DDC84' },
+  glute:       { label:'Kalça',       exIds:['hip_thrust'], color:'#3DDC84' },
+  adductor:    { label:'İç Bacak',    exIds:['hip_adduction'], color:'#3DDC84' },
+  calf:        { label:'Baldır',      exIds:['calf_raise'], color:'#3DDC84' },
+};
+
+function getWeekRange(offset) {
+  const now = new Date();
+  const day = now.getDay(); // 0=Sun
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - ((day + 6) % 7) + offset * 7);
+  monday.setHours(0,0,0,0);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  sunday.setHours(23,59,59,999);
+  return { start: dateStr(monday), end: dateStr(sunday) };
+}
+
+function getMuscleVolumes(offset) {
+  const { start, end } = getWeekRange(offset);
+  const vols = {};
+  Object.keys(MUSCLE_MAP).forEach(m => vols[m] = 0);
+
+  Object.keys(db.workouts).forEach(ds => {
+    if (ds < start || ds > end) return;
+    const w = db.workouts[ds]; if (!w.sets) return;
+    Object.keys(MUSCLE_MAP).forEach(muscleId => {
+      MUSCLE_MAP[muscleId].exIds.forEach(exId => {
+        const sets = w.sets[exId] || [];
+        sets.forEach(s => {
+          vols[muscleId] += (parseFloat(s.kg)||0) * (parseFloat(s.reps)||0);
+        });
+      });
+    });
+  });
+  return vols;
+}
+
+// Renk: 0→koyu, max→parlak accent
+function muscleColor(vol, maxVol, baseColor) {
+  if (vol === 0) return '#1E1E2E'; // çalışılmadı
+  const pct = Math.min(vol / maxVol, 1);
+  // opacity ile değil, rengin alpha kanalıyla
+  const hex = baseColor.replace('#','');
+  const r = parseInt(hex.slice(0,2),16);
+  const g = parseInt(hex.slice(2,4),16);
+  const b = parseInt(hex.slice(4,6),16);
+  const a = 0.2 + pct * 0.8;
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+function renderMuscleMap() {
+  const vols = getMuscleVolumes(muscleWeekOffset);
+  const maxVol = Math.max(...Object.values(vols), 1);
+  const { start, end } = getWeekRange(muscleWeekOffset);
+  const sp = parseDate(start), ep = parseDate(end);
+  const weekLabel = muscleWeekOffset === 0 ? 'Bu Hafta'
+    : muscleWeekOffset === -1 ? 'Geçen Hafta'
+    : `${sp.getDate()}/${sp.getMonth()+1} – ${ep.getDate()}/${ep.getMonth()+1}`;
+
+  const c = m => muscleColor(vols[m], maxVol, MUSCLE_MAP[m].color);
+
+  // Ön vücut SVG
+  const frontSVG = `<svg viewBox="0 0 120 260" xmlns="http://www.w3.org/2000/svg">
+    <!-- Baş -->
+    <ellipse cx="60" cy="18" rx="14" ry="16" fill="#242436" stroke="#3A3A5C" stroke-width="1"/>
+    <!-- Boyun -->
+    <rect x="54" y="32" width="12" height="10" rx="4" fill="#242436" stroke="#3A3A5C" stroke-width="1"/>
+    <!-- Gövde -->
+    <path d="M35 42 Q25 50 22 75 L22 130 Q22 135 28 135 L92 135 Q98 135 98 130 L98 75 Q95 50 85 42 Z" fill="#1E1E2E" stroke="#3A3A5C" stroke-width="1"/>
+    <!-- Üst Göğüs -->
+    <path d="M38 48 Q48 44 60 44 Q72 44 82 48 L80 70 Q70 66 60 66 Q50 66 40 70 Z" fill="${c('chest_upper')}" stroke="none" rx="4"/>
+    <!-- Alt/İç Göğüs -->
+    <path d="M40 70 Q50 66 60 66 Q70 66 80 70 L79 92 Q70 96 60 97 Q50 96 41 92 Z" fill="${c('chest_lower')}" stroke="none"/>
+    <!-- Ön Omuz Sol -->
+    <ellipse cx="30" cy="58" rx="9" ry="11" fill="${c('front_delt')}" stroke="none"/>
+    <!-- Ön Omuz Sağ -->
+    <ellipse cx="90" cy="58" rx="9" ry="11" fill="${c('front_delt')}" stroke="none"/>
+    <!-- Sol kol dış (triceps görünmez önde, biceps) -->
+    <path d="M22 52 Q14 56 12 80 Q11 100 15 115 L22 115 L22 52" fill="${c('biceps')}" stroke="none"/>
+    <!-- Sağ kol -->
+    <path d="M98 52 Q106 56 108 80 Q109 100 105 115 L98 115 L98 52" fill="${c('biceps')}" stroke="none"/>
+    <!-- Sol Triceps (ön görünüm, iç kol) -->
+    <path d="M22 75 Q17 90 17 110 L22 115 L22 75" fill="${c('triceps')}" stroke="none" opacity="0.6"/>
+    <path d="M98 75 Q103 90 103 110 L98 115 L98 75" fill="${c('triceps')}" stroke="none" opacity="0.6"/>
+    <!-- Karın (gövde alt) -->
+    <rect x="44" y="97" width="32" height="35" rx="6" fill="#1A1A2E" stroke="#3A3A5C" stroke-width="0.5"/>
+    <!-- Bacaklar -->
+    <!-- Sol quad -->
+    <path d="M28 135 L28 200 Q32 210 40 210 L50 210 Q56 205 56 195 L56 135 Z" fill="${c('quad')}" stroke="#3A3A5C" stroke-width="0.5"/>
+    <!-- Sağ quad -->
+    <path d="M92 135 L92 200 Q88 210 80 210 L70 210 Q64 205 64 195 L64 135 Z" fill="${c('quad')}" stroke="#3A3A5C" stroke-width="0.5"/>
+    <!-- Sol iç bacak -->
+    <path d="M56 140 L56 195 Q57 205 60 207 Q60 205 64 195 L64 140 Z" fill="${c('adductor')}" stroke="none" opacity="0.9"/>
+    <!-- Sol alt bacak (baldır) -->
+    <path d="M30 210 Q28 230 30 250 L42 250 Q46 230 44 210 Z" fill="${c('calf')}" stroke="#3A3A5C" stroke-width="0.5"/>
+    <!-- Sağ alt bacak -->
+    <path d="M90 210 Q92 230 90 250 L78 250 Q74 230 76 210 Z" fill="${c('calf')}" stroke="#3A3A5C" stroke-width="0.5"/>
+    <!-- Etiket: ÖN -->
+    <text x="60" y="258" text-anchor="middle" font-size="8" fill="#5A5A78" font-family="Inter,sans-serif">ÖN</text>
+  </svg>`;
+
+  // Arka vücut SVG
+  const backSVG = `<svg viewBox="0 0 120 260" xmlns="http://www.w3.org/2000/svg">
+    <!-- Baş -->
+    <ellipse cx="60" cy="18" rx="14" ry="16" fill="#242436" stroke="#3A3A5C" stroke-width="1"/>
+    <!-- Boyun -->
+    <rect x="54" y="32" width="12" height="10" rx="4" fill="#242436" stroke="#3A3A5C" stroke-width="1"/>
+    <!-- Gövde arka -->
+    <path d="M35 42 Q25 50 22 75 L22 130 Q22 135 28 135 L92 135 Q98 135 98 130 L98 75 Q95 50 85 42 Z" fill="#1E1E2E" stroke="#3A3A5C" stroke-width="1"/>
+    <!-- Arka Omuz Sol -->
+    <ellipse cx="30" cy="56" rx="9" ry="11" fill="${c('rear_delt')}" stroke="none"/>
+    <!-- Arka Omuz Sağ -->
+    <ellipse cx="90" cy="56" rx="9" ry="11" fill="${c('rear_delt')}" stroke="none"/>
+    <!-- Üst Sırt / Lat Sol -->
+    <path d="M38 48 Q30 60 28 90 L42 90 Q44 70 48 58 Z" fill="${c('lat')}" stroke="none"/>
+    <!-- Üst Sırt / Lat Sağ -->
+    <path d="M82 48 Q90 60 92 90 L78 90 Q76 70 72 58 Z" fill="${c('lat')}" stroke="none"/>
+    <!-- Orta Sırt Sol -->
+    <path d="M42 58 Q48 54 58 53 L58 95 Q50 96 44 100 L42 70 Z" fill="${c('mid_back')}" stroke="none"/>
+    <!-- Orta Sırt Sağ -->
+    <path d="M78 58 Q72 54 62 53 L62 95 Q70 96 76 100 L78 70 Z" fill="${c('mid_back')}" stroke="none"/>
+    <!-- Sol Kol Arka (Triceps) -->
+    <path d="M22 52 Q14 56 12 90 Q11 108 15 115 L22 115 L22 52" fill="${c('triceps')}" stroke="none"/>
+    <!-- Sağ Kol Arka -->
+    <path d="M98 52 Q106 56 108 90 Q109 108 105 115 L98 115 L98 52" fill="${c('triceps')}" stroke="none"/>
+    <!-- Kalça -->
+    <path d="M28 128 L28 155 Q38 165 60 165 Q82 165 92 155 L92 128 Z" fill="${c('glute')}" stroke="none"/>
+    <!-- Sol Hamstring -->
+    <path d="M28 155 L30 205 Q35 210 44 210 L52 210 Q56 205 56 195 L54 155 Q44 165 28 155 Z" fill="${c('hamstring')}" stroke="#3A3A5C" stroke-width="0.5"/>
+    <!-- Sağ Hamstring -->
+    <path d="M92 155 L90 205 Q85 210 76 210 L68 210 Q64 205 64 195 L66 155 Q76 165 92 155 Z" fill="${c('hamstring')}" stroke="#3A3A5C" stroke-width="0.5"/>
+    <!-- Sol Baldır arka -->
+    <path d="M30 210 Q28 232 32 250 L44 250 Q46 232 44 210 Z" fill="${c('calf')}" stroke="#3A3A5C" stroke-width="0.5"/>
+    <!-- Sağ Baldır arka -->
+    <path d="M90 210 Q92 232 88 250 L76 250 Q74 232 76 210 Z" fill="${c('calf')}" stroke="#3A3A5C" stroke-width="0.5"/>
+    <!-- Etiket: ARKA -->
+    <text x="60" y="258" text-anchor="middle" font-size="8" fill="#5A5A78" font-family="Inter,sans-serif">ARKA</text>
+  </svg>`;
+
+  // Detay bar chart
+  const sorted = Object.keys(MUSCLE_MAP)
+    .filter(m => vols[m] > 0)
+    .sort((a,b) => vols[b] - vols[a]);
+
+  const detailRows = sorted.map(m => {
+    const pct = maxVol > 0 ? (vols[m] / maxVol * 100) : 0;
+    const hex = MUSCLE_MAP[m].color.replace('#','');
+    const r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b2 = parseInt(hex.slice(4,6),16);
+    return `<div class="muscle-detail-row">
+      <span class="muscle-detail-name">${MUSCLE_MAP[m].label}</span>
+      <div class="muscle-detail-bar-bg">
+        <div class="muscle-detail-bar" style="width:${pct}%;background:rgba(${r},${g},${b2},0.8);"></div>
+      </div>
+      <span class="muscle-detail-val">${Math.round(vols[m])} kg</span>
+    </div>`;
+  }).join('');
+
+  const noData = sorted.length === 0;
+
+  return `
+  <div class="muscle-map-wrap">
+    <div class="muscle-week-nav">
+      <button class="btn-icon" onclick="muscleWeekNav(-1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <span class="muscle-week-label">${weekLabel}</span>
+      <button class="btn-icon" onclick="muscleWeekNav(1)" ${muscleWeekOffset >= 0 ? 'style="opacity:.3;pointer-events:none"' : ''}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+    ${noData
+      ? `<div style="text-align:center;padding:32px 0;color:var(--text3);font-size:13px;">Bu haftaya ait antrenman verisi yok.</div>`
+      : `<div class="muscle-map-views">${frontSVG}${backSVG}</div>
+         <div class="muscle-legend">
+           <div class="muscle-legend-item"><div class="muscle-legend-dot" style="background:#1E1E2E;border:1px solid #3A3A5C;"></div>Çalışılmadı</div>
+           <div class="muscle-legend-item"><div class="muscle-legend-dot" style="background:rgba(232,255,58,0.3);"></div>Az</div>
+           <div class="muscle-legend-item"><div class="muscle-legend-dot" style="background:rgba(232,255,58,0.8);"></div>Yüksek</div>
+         </div>
+         <div class="muscle-detail">${detailRows}</div>`
+    }
+  </div>`;
+}
+
+function muscleWeekNav(dir) {
+  muscleWeekOffset = Math.min(muscleWeekOffset + dir, 0);
+  renderProgress();
+}
 
 // ═══════════════════════════════════════════════
 // SETTINGS
