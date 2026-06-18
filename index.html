@@ -97,15 +97,24 @@ body{
 .day-selector{
   display:grid;
   grid-template-columns:repeat(5,1fr);
-  gap:5px;
+  gap:4px;
   padding:10px 12px 0;
+  width:100%;
 }
 .day-sel-btn{
-  padding:9px 4px;border-radius:10px;border:1px solid var(--border);
-  background:var(--card2);color:var(--text2);
-  font-size:11px;font-weight:700;font-family:'Inter',sans-serif;
-  cursor:pointer;white-space:nowrap;transition:all .15s;
+  padding:8px 2px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:var(--card2);
+  color:var(--text2);
+  font-size:10px;
+  font-weight:700;
+  font-family:'Inter',sans-serif;
+  cursor:pointer;
+  transition:all .15s;
   text-align:center;
+  width:100%;
+  line-height:1.3;
 }
 .day-sel-btn.active-push{background:var(--orange-dim);color:var(--orange);border-color:var(--orange-border);}
 .day-sel-btn.active-pull{background:rgba(167,139,250,.14);color:var(--purple);border-color:rgba(167,139,250,.35);}
@@ -491,10 +500,19 @@ function shiftDate(n) {
 
 function renderDaySelector() {
   const row = document.getElementById('daySelectorRow');
+  // Kısa etiketler — iPhone 11'de 5 buton yan yana sığsın
+  const shortNames = {
+    push_a: 'PUSH<br>A',
+    pull_a: 'PULL<br>A',
+    legs:   'LEGS',
+    push_b: 'PUSH<br>B',
+    pull_b: 'PULL<br>B',
+  };
   row.innerHTML = PROGRAM.map((p, i) => {
     const active = selectedProgIdx === i;
     const cls = active ? `day-sel-btn active-${p.type}` : 'day-sel-btn';
-    return `<button class="${cls}" onclick="pickProg(${i})">${p.name}</button>`;
+    const label = shortNames[p.id] || p.name;
+    return `<button class="${cls}" onclick="pickProg(${i})">${label}</button>`;
   }).join('');
 }
 
