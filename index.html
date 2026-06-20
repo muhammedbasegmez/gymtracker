@@ -517,6 +517,29 @@ function renderDaySelector() {
 }
 
 function pickProg(idx) {
+  const w = db.workouts[viewDate];
+
+  // Tamamlanmış antrenmanı değiştirme
+  if (w && w.completed) {
+    showToast('🔒 Antrenman kilitli — önce kilidi aç');
+    return;
+  }
+
+  // Farklı programla veri varsa onay al
+  if (w && w.dayIdx !== idx) {
+    const hasData = Object.values(w.sets || {}).some(sets =>
+      sets.some(s => s.kg !== '' && s.kg !== undefined)
+    );
+    if (hasData) {
+      if (!confirm(`Bu güne ait ${PROGRAM[w.dayIdx]?.name} verisi var. ${PROGRAM[idx].name} ile değiştirirsen mevcut veriler silinecek. Devam et?`)) {
+        return;
+      }
+      // Onayladı — veriyi temizle
+      w.sets = {};
+      w.exOrder = null;
+    }
+  }
+
   selectedProgIdx = idx;
   renderToday();
 }
@@ -555,15 +578,11 @@ function renderToday() {
   }
   const w = db.workouts[viewDate];
 
-  // Program değiştiyse setleri sıfırla, notları koru
-  if (w.dayIdx !== selectedProgIdx) {
-    w.dayIdx = selectedProgIdx;
-    w.sets = {};
-    w.completed = false;
-  }
+  // dayIdx güncelle ama veriyi ASLA silme — pickProg zaten onay aldı
+  w.dayIdx = selectedProgIdx;
   if (!w.notes) w.notes = {};
 
-  // Set şablonlarını hazırla
+  // Set şablonlarını hazırla — sadece henüz girilmemiş hareketler için
   prog.exercises.forEach(ex => {
     if (!w.sets[ex.id]) {
       const prev = getPrevSets(ex.id, viewDate);
@@ -585,6 +604,9 @@ function renderToday() {
     ? w.exOrder.map(id => prog.exercises.find(ex => ex.id === id)).filter(Boolean)
     : prog.exercises;
 
+  const done = w.completed;
+
+  // Tamamlanmış antrenman — kilitle
   let html = `
   <div class="day-header">
     <div class="day-badge">
@@ -594,24 +616,27 @@ function renderToday() {
     <div class="day-name">${prog.name}</div>
     <div class="day-desc">${prog.desc}</div>
     <div class="day-actions">
-      <button class="btn btn-danger btn-sm" onclick="confirmDeleteWorkout('${viewDate}')">🗑 Günü Sil</button>
+      ${done
+        ? `<button class="btn btn-ghost btn-sm" onclick="unlockWorkout('${viewDate}')">🔓 Kilidi Aç</button>`
+        : `<button class="btn btn-danger btn-sm" onclick="confirmDeleteWorkout('${viewDate}')">🗑 Günü Sil</button>`
+      }
     </div>
   </div>
+  ${done ? `<div style="margin:0 16px 10px;padding:10px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:10px;font-size:12px;color:var(--green);font-weight:600;">✓ Antrenman tamamlandı ve kilitlendi. Düzenlemek için kilidi aç.</div>` : ''}
   <div id="exListContainer">`;
 
-  orderedExercises.forEach(ex => { html += renderExCard(ex, viewDate, w); });
+  orderedExercises.forEach(ex => { html += renderExCard(ex, viewDate, w, done); });
   html += `</div>`;
 
-  const done = w.completed;
   html += `<button class="complete-btn ${done ? 'done' : ''}" onclick="toggleComplete('${viewDate}')">
-    ${done ? '✓ TAMAMLANDI — TEKRAR AÇ' : '✓ ANTRENMAN TAMAM'}
+    ${done ? '✓ TAMAMLANDI' : '✓ ANTRENMAN TAMAM'}
   </button><div style="height:28px;"></div>`;
 
   content.innerHTML = html;
   initDragDrop();
 }
 
-function renderExCard(ex, dateS, w) {
+function renderExCard(ex, dateS, w, locked = false) {
   const sets = w.sets[ex.id] || [];
   const prevSets = getPrevSets(ex.id, dateS);
   const prevDate = getPrevDate(ex.id, dateS);
@@ -687,12 +712,14 @@ function renderExCard(ex, dateS, w) {
       ? `<span class="ds-badge">DS</span>`
       : `<span class="set-num">${i+1}</span>`;
 
+    const dis = locked ? 'disabled style="opacity:.5;pointer-events:none"' : '';
+
     setsHtml += `
     <div class="set-row" id="sr_${dateS}_${ex.id}_${i}">
       ${numLabel}
       <div class="set-input-wrap col-kg">
         <input class="set-input${kgClass ? ' '+kgClass : ''}" type="number" inputmode="decimal"
-          value="${set.kg}" placeholder=""
+          value="${set.kg}" placeholder="" ${dis}
           data-d="${dateS}" data-e="${ex.id}" data-i="${i}" data-f="kg"
           oninput="onInput(this)" onfocus="onFocus(this)">
         ${ghostKg ? `<div class="set-ghost-val">${ghostKg}</div>` : ''}
@@ -700,16 +727,16 @@ function renderExCard(ex, dateS, w) {
       </div>
       <div class="set-input-wrap col-reps">
         <input class="set-input" type="number" inputmode="numeric"
-          value="${set.reps}" placeholder=""
+          value="${set.reps}" placeholder="" ${dis}
           data-d="${dateS}" data-e="${ex.id}" data-i="${i}" data-f="reps"
           oninput="onInput(this)" onfocus="onFocus(this)">
         ${ghostRps ? `<div class="set-ghost-val">${ghostRps}</div>` : ''}
       </div>
       <div class="set-input-wrap col-rpe">
-        <button class="rpe-btn${set.rpe === '' ? ' empty' : ''}"
+        <button class="rpe-btn${set.rpe === '' ? ' empty' : ''}" ${dis}
           onclick="openRpePicker('${dateS}','${ex.id}',${i})">${set.rpe !== '' ? set.rpe : '—'}</button>
       </div>
-      <button class="set-del-btn" onclick="deleteSet('${dateS}','${ex.id}',${i})">
+      <button class="set-del-btn" ${dis} onclick="deleteSet('${dateS}','${ex.id}',${i})">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
         </svg>
@@ -763,10 +790,10 @@ function renderExCard(ex, dateS, w) {
     </div>
     ${setHeaderHtml}
     <div class="sets-container" id="sets_${dateS}_${ex.id}" style="padding-bottom:${sets.some((_,i)=>{ const p=prevSets?prevSets[i]:null; return p&&sets[i]&&sets[i].kg!==''&&p.kg!==''; })?'20px':'8px'}">${setsHtml}</div>
-    <div class="add-set-row">
+    ${locked ? '' : `<div class="add-set-row">
       <button class="btn btn-ghost" onclick="addSet('${dateS}','${ex.id}',false)">+ Set Ekle</button>
       <button class="btn btn-orange" onclick="addSet('${dateS}','${ex.id}',true)">+ Drop Set</button>
-    </div>
+    </div>`}
   </div>`;
 }
 
@@ -1007,11 +1034,19 @@ function getPrevNote(exId, currentDate) {
 // COMPLETE
 // ═══════════════════════════════════════════════
 function toggleComplete(d) {
-  const w = db.workouts[d]; if (!w) return;
-  w.completed = !w.completed;
+  const w = db.workouts[d]; if (!w || w.completed) return;
+  w.completed = true;
   saveDB();
   renderToday();
-  if (w.completed) showToast('💪 Antrenman tamamlandı!');
+  showToast('💪 Antrenman tamamlandı ve kilitlendi!');
+}
+
+function unlockWorkout(d) {
+  const w = db.workouts[d]; if (!w) return;
+  w.completed = false;
+  saveDB();
+  renderToday();
+  showToast('🔓 Antrenman kilidi açıldı');
 }
 
 // ═══════════════════════════════════════════════
