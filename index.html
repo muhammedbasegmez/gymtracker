@@ -18,6 +18,7 @@
   --green:#3DDC84;--green-dim:rgba(61,220,132,.14);--green-border:rgba(61,220,132,.35);
   --orange:#FF9F43;--orange-dim:rgba(255,159,67,.14);--orange-border:rgba(255,159,67,.35);
   --purple:#A78BFA;
+  --blue:#4FC3F7;--blue-dim:rgba(79,195,247,.14);--blue-border:rgba(79,195,247,.35);
   --text:#F2F2F2;--text2:#A0A0B8;--text3:#5A5A78;
   --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.04);
   --radius:14px;
@@ -119,6 +120,7 @@ body{
 .day-sel-btn.active-push{background:var(--orange-dim);color:var(--orange);border-color:var(--orange-border);}
 .day-sel-btn.active-pull{background:rgba(167,139,250,.14);color:var(--purple);border-color:rgba(167,139,250,.35);}
 .day-sel-btn.active-legs{background:var(--green-dim);color:var(--green);border-color:var(--green-border);}
+.day-sel-btn.active-full{background:var(--blue-dim);color:var(--blue);border-color:var(--blue-border);}
 
 /* DATE NAV */
 .date-nav{display:flex;align-items:center;gap:8px;}
@@ -207,6 +209,7 @@ body{
 .tag-push{background:var(--orange-dim);color:var(--orange);}
 .tag-pull{background:rgba(167,139,250,.14);color:var(--purple);}
 .tag-legs{background:var(--green-dim);color:var(--green);}
+.tag-full{background:var(--blue-dim);color:var(--blue);}
 .tag-rest{background:var(--card3);color:var(--text3);}
 
 /* CALENDAR */
@@ -368,7 +371,7 @@ body{
 
 <script>
 // ═══════════════════════════════════════════════
-// PROGRAM — 5 antrenman tipi
+// PROGRAM — 8 antrenman tipi (5x PPL + 3x Full Body A/B/C)
 // ═══════════════════════════════════════════════
 const PROGRAM = [
   {
@@ -429,6 +432,42 @@ const PROGRAM = [
       {id:'face_pull',          name:'Face Pull (Kablo)',                 defSets:4, defReps:13},
       {id:'incline_db_curl',    name:'Incline Dumbbell Curl',            defSets:3, defReps:11},
       {id:'reverse_zbar',       name:'Reverse Grip Z-Bar Curl',          defSets:3, defReps:12},
+    ]
+  },
+  {
+    id:'full_a', name:'FULL BODY A', type:'full',
+    desc:'Ağır / Güç Odaklı',
+    exercises:[
+      {id:'barbell_squat',    name:'Barbell Back Squat',            defSets:4, defReps:5},
+      {id:'barbell_bench',    name:'Barbell Flat Bench Press',      defSets:4, defReps:5},
+      {id:'row_heavy',        name:'Barbell / Cable Row',            defSets:4, defReps:6},
+      {id:'ohp_barbell',      name:'Overhead Press (OHP)',           defSets:3, defReps:6},
+      {id:'rdl',              name:'Romanian Deadlift (RDL)',        defSets:3, defReps:8},
+      {id:'triceps_rope',     name:'Cable Triceps Pushdown',         defSets:3, defReps:9},
+    ]
+  },
+  {
+    id:'full_b', name:'FULL BODY B', type:'full',
+    desc:'Orta Yük / Hipertrofi Odaklı',
+    exercises:[
+      {id:'leg_press',          name:'Leg Press / Bulgarian Split Squat', defSets:3, defReps:10},
+      {id:'incline_db_press',   name:'Incline Dumbbell Press',            defSets:3, defReps:10},
+      {id:'lat_pulldown_b',     name:'Lat Pulldown / Barfiks',            defSets:3, defReps:10},
+      {id:'seated_db_shoulder', name:'Dumbbell Shoulder Press',           defSets:3, defReps:10},
+      {id:'seated_leg_curl',    name:'Leg Curl / Seated Hamstring Curl',  defSets:3, defReps:12},
+      {id:'incline_db_curl',    name:'Incline Dumbbell Curl',             defSets:3, defReps:10},
+    ]
+  },
+  {
+    id:'full_c', name:'FULL BODY C', type:'full',
+    desc:'Hafif Yük / Metabolik Stres & Pump',
+    exercises:[
+      {id:'hip_thrust',        name:'Hip Thrust / Trap Bar Deadlift (Hafif)', defSets:3, defReps:12},
+      {id:'dips_fly',          name:'Dips / Cable Chest Fly',                 defSets:3, defReps:13},
+      {id:'face_pull',         name:'Face Pull',                              defSets:4, defReps:15},
+      {id:'db_lateral',        name:'Dumbbell Lateral Raise',                 defSets:4, defReps:15},
+      {id:'overhead_cable_tri',name:'Cable Triceps Overhead Extension',       defSets:3, defReps:13},
+      {id:'hammer_curl',       name:'Hammer Curl / Cable Curl',                defSets:3, defReps:13},
     ]
   },
 ];
@@ -507,6 +546,9 @@ function renderDaySelector() {
     legs:   'LEGS',
     push_b: 'PUSH<br>B',
     pull_b: 'PULL<br>B',
+    full_a: 'FULL<br>A',
+    full_b: 'FULL<br>B',
+    full_c: 'FULL<br>C',
   };
   row.innerHTML = PROGRAM.map((p, i) => {
     const active = selectedProgIdx === i;
@@ -1100,6 +1142,7 @@ function renderCalendar() {
   const pushC = completed.filter(d => PROGRAM[db.workouts[d].dayIdx]?.type === 'push').length;
   const pullC = completed.filter(d => PROGRAM[db.workouts[d].dayIdx]?.type === 'pull').length;
   const legsC = completed.filter(d => PROGRAM[db.workouts[d].dayIdx]?.type === 'legs').length;
+  const fullC = completed.filter(d => PROGRAM[db.workouts[d].dayIdx]?.type === 'full').length;
 
   let html = `
   <div class="cal-month-nav">
@@ -1112,6 +1155,7 @@ function renderCalendar() {
     <div class="stat-item"><div class="stat-val" style="color:var(--orange)">${pushC}</div><div class="stat-label">Push</div></div>
     <div class="stat-item"><div class="stat-val" style="color:var(--purple)">${pullC}</div><div class="stat-label">Pull</div></div>
     <div class="stat-item"><div class="stat-val" style="color:var(--green)">${legsC}</div><div class="stat-label">Legs</div></div>
+    <div class="stat-item"><div class="stat-val" style="color:var(--blue)">${fullC}</div><div class="stat-label">Full</div></div>
   </div></div>
   <div class="cal-grid">
     <div class="cal-dow">Pt</div><div class="cal-dow">Sa</div><div class="cal-dow">Ça</div>
@@ -1214,7 +1258,7 @@ function renderProgress() {
     return;
   }
 
-  const filters = [{id:'all',label:'Tümü'},{id:'push',label:'Push'},{id:'pull',label:'Pull'},{id:'legs',label:'Legs'}];
+  const filters = [{id:'all',label:'Tümü'},{id:'push',label:'Push'},{id:'pull',label:'Pull'},{id:'legs',label:'Legs'},{id:'full',label:'Full Body'}];
   let html = `
   <div class="prog-filter">${filters.map(f =>
     `<button class="prog-filter-btn${progFilter===f.id?' active':''}" onclick="setProgFilter('${f.id}')">${f.label}</button>`
