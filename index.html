@@ -624,6 +624,7 @@ function pickProg(idx) {
 }
 
 function renderToday() {
+  flushPending();
   const isToday = viewDate === todayStr();
   document.getElementById('dateNavLabel').textContent = isToday ? 'Bugün' : fmtShort(viewDate);
 
@@ -666,7 +667,9 @@ function renderToday() {
     if (!w.sets[ex.id]) {
       const prev = getPrevSets(ex.id, viewDate);
       if (prev && prev.length > 0) {
-        w.sets[ex.id] = prev.map(s => ({ ...s, rpe: '' }));
+        // Geçen seansın kg'ları kayda yazılmaz, yalnızca silik (hayalet) gösterilir.
+        // Böylece sadece açıp çıktığın gün gelişim geçmişine sahte seans olarak girmez.
+        w.sets[ex.id] = prev.map(s => ({ kg: '', reps: s.reps, rpe: '', isDS: !!s.isDS }));
       } else {
         const rows = Array.from({ length: ex.defSets }, () => ({ kg: '', reps: ex.defReps, rpe: '', isDS: false }));
         if (ex.defDropSet) rows.push({ kg: '', reps: ex.defReps, rpe: '', isDS: true });
@@ -879,6 +882,13 @@ function renderExCard(ex, dateS, w, locked = false) {
 // INPUT — 500ms debounce, blur iptal etmez
 // ═══════════════════════════════════════════════
 const _timers = {};
+const _pend = {};   // henüz kaydedilmemiş girdiler
+function flushPending() {
+  Object.keys(_timers).forEach(k => clearTimeout(_timers[k]));
+  Object.keys(_pend).forEach(k => { const fn = _pend[k]; delete _pend[k]; fn(); });
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden) flushPending(); });
+window.addEventListener('pagehide', flushPending);
 
 function onInput(el) {
   const ghost = el.parentElement.querySelector('.set-ghost-val');
@@ -912,7 +922,8 @@ function onInput(el) {
 
   const k = `${el.dataset.d}_${el.dataset.e}_${el.dataset.i}_${el.dataset.f}`;
   clearTimeout(_timers[k]);
-  _timers[k] = setTimeout(() => commitSet(el.dataset.d, el.dataset.e, +el.dataset.i, el.dataset.f, el.value), 500);
+  _pend[k] = () => commitSet(el.dataset.d, el.dataset.e, +el.dataset.i, el.dataset.f, el.value);
+  _timers[k] = setTimeout(() => { const fn = _pend[k]; delete _pend[k]; if (fn) fn(); }, 500);
 }
 
 function onFocus(el) {
@@ -930,14 +941,16 @@ function commitSet(d, e, i, f, v) {
 function onNoteInput(el) {
   const k = `note_${el.dataset.d}_${el.dataset.e}`;
   clearTimeout(_timers[k]);
-  _timers[k] = setTimeout(() => {
+  const save = () => {
     const w = db.workouts[el.dataset.d];
     if (!w) return;
     if (!w.notes) w.notes = {};
     w.notes[el.dataset.e] = el.value;
     saveDB();
     showToast('Not kaydedildi ✓');
-  }, 500);
+  };
+  _pend[k] = save;
+  _timers[k] = setTimeout(() => { delete _pend[k]; save(); }, 500);
 }
 
 function toggleNote(exId) {
@@ -979,6 +992,7 @@ function pickRpe(d, e, i, v) {
 // SET OPS
 // ═══════════════════════════════════════════════
 function addSet(d, e, isDS) {
+  flushPending();
   const w = db.workouts[d]; if (!w) return;
   if (!w.sets[e]) w.sets[e] = [];
   const last = w.sets[e].slice(-1)[0];
@@ -989,6 +1003,7 @@ function addSet(d, e, isDS) {
 }
 
 function deleteSet(d, e, i) {
+  flushPending();
   const w = db.workouts[d]; if (!w?.sets[e]) return;
   if (w.sets[e].length <= 1) { showToast('En az 1 set gerekli'); return; }
   w.sets[e].splice(i, 1);
@@ -1112,6 +1127,7 @@ function getPrevNote(exId, currentDate) {
 // COMPLETE
 // ═══════════════════════════════════════════════
 function toggleComplete(d) {
+  flushPending();
   const w = db.workouts[d]; if (!w || w.completed) return;
   w.completed = true;
   saveDB();
@@ -1120,6 +1136,7 @@ function toggleComplete(d) {
 }
 
 function unlockWorkout(d) {
+  flushPending();
   const w = db.workouts[d]; if (!w) return;
   w.completed = false;
   saveDB();
@@ -1697,6 +1714,27 @@ function showToast(msg) {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
 }
+
+// ═══════════════════════════════════════════════
+// YENİ GÜN — uygulama açık kalsa bile "Bugün" güncellensin
+// ═══════════════════════════════════════════════
+let _todayShown = todayStr();
+function checkNewDay() {
+  const now = todayStr();
+  if (now === _todayShown) return;
+  const old = _todayShown; _todayShown = now;
+  const w = db.workouts[old];
+  const inProgress = !!w && !w.completed &&
+    Object.values(w.sets || {}).some(sets => sets.some(r => r.kg !== '' && r.kg !== undefined));
+  // Başka bir güne bakıyorsa ya da yarım kalmış bir seansın varsa ekranı elinden alma;
+  // sadece "Bugün" etiketi doğru görünsün.
+  if (viewDate !== old || inProgress) { renderToday(); return; }
+  viewDate = now; selectedProgIdx = null; window._plateRoll = true;
+  renderToday();
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) checkNewDay(); });
+window.addEventListener('pageshow', checkNewDay);
+setInterval(checkNewDay, 60000);
 
 // ═══════════════════════════════════════════════
 // INIT
