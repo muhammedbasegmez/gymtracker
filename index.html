@@ -40,13 +40,12 @@
   --nav-h:68px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%;height:100%;background:var(--bg);}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100%;background:var(--bg);}
 button,.day-sel-btn,.nav-btn,.set-input,.rpe-btn{touch-action:manipulation;}
 body{
-  display:flex;flex-direction:column;
   background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;
-  overflow:hidden;
-  position:fixed;top:0;left:0;right:0;bottom:calc(0px - var(--nav-shift,0px));
+  min-height:calc(100vh + 2px);min-height:calc(100lvh + 2px);
+  overscroll-behavior-y:none;overflow-x:clip;
 }
 button{font-family:var(--sans);}
 
@@ -77,7 +76,7 @@ button{font-family:var(--sans);}
 /* ── alt menü: yüzen cam çubuk ── */
 #nav{
   position:fixed;z-index:50;left:14px;right:14px;
-  bottom:calc(env(safe-area-inset-bottom, 0px) + 6px - var(--nav-shift,0px));
+  bottom:calc(6px + env(safe-area-inset-bottom, 0px) * .3 - var(--d,0px));
   display:flex;gap:2px;padding:6px;
   border-radius:32px;
   background:color-mix(in srgb,var(--card2) 70%,transparent);
@@ -97,10 +96,10 @@ button{font-family:var(--sans);}
 .nav-btn svg{width:24px;height:24px;stroke-width:1.8;}
 
 /* ── ekranlar ── */
-#app{flex:1;overflow:hidden;position:relative;min-height:0;}
+#app{position:relative;}
 .screen{
-  position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;display:none;
-  padding-bottom:calc(env(safe-area-inset-bottom, 0px) + var(--nav-h) + 40px);
+  display:none;
+  padding-bottom:calc(var(--sab, env(safe-area-inset-bottom, 0px)) + var(--nav-h) + 40px);
 }
 .screen.active{display:block;}
 
@@ -152,7 +151,7 @@ button{font-family:var(--sans);}
 .alt-chip.on{background:var(--c,var(--accent));color:#121314;}
 .exercise-card.collapsed .alt-row{display:none !important;}
 .orph{font-size:12px;color:var(--text3);margin-top:3px;}
-.editor{position:fixed;inset:0;bottom:calc(0px - var(--nav-shift,0px));z-index:150;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top, 0px) + 10px) 14px calc(env(safe-area-inset-bottom, 0px) + 40px);}
+.editor{position:fixed;inset:0;bottom:calc(0px - var(--d,0px));z-index:150;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top, 0px) + 10px) 14px calc(var(--sab, env(safe-area-inset-bottom, 0px)) + 40px);}
 .editor.hidden{display:none;}
 .ed-head{display:flex;align-items:center;gap:12px;padding:6px 0 16px;}
 .ed-title{font-family:var(--display);font-weight:800;font-size:36px;line-height:1;}
@@ -176,6 +175,9 @@ button{font-family:var(--sans);}
 .chk small{display:block;color:var(--text3);font-size:12px;margin-top:2px;}
 .xrow{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
 .xrow .modal-input{margin-bottom:0;flex:1;}
+
+
+body.kb #nav{display:none;}
 
 /* ── butonlar ── */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 16px;min-height:44px;border-radius:16px;border:none;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s,transform .12s;-webkit-touch-callout:none;}
@@ -357,9 +359,9 @@ button{font-family:var(--sans);}
 .set-sec-title{font-size:13px;font-weight:600;color:var(--text2);padding:18px 20px 8px;}
 
 /* ── alt sayfa (modal) ── */
-.modal-overlay{position:fixed;inset:0;bottom:calc(0px - var(--nav-shift,0px));background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:flex-end;justify-content:center;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
+.modal-overlay{position:fixed;inset:0;bottom:calc(0px - var(--d,0px));background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:flex-end;justify-content:center;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
 .modal-overlay.hidden{display:none;}
-.modal{background:var(--card);border-radius:32px 32px 0 0;border:1px solid var(--border);border-bottom:none;padding:12px 18px calc(22px + env(safe-area-inset-bottom, 0px));width:100%;max-width:520px;max-height:88vh;overflow-y:auto;}
+.modal{background:var(--card);border-radius:32px 32px 0 0;border:1px solid var(--border);border-bottom:none;padding:12px 18px calc(22px + var(--sab, env(safe-area-inset-bottom, 0px)));width:100%;max-width:520px;max-height:88vh;overflow-y:auto;}
 .modal-handle{width:42px;height:5px;background:rgba(255,255,255,.2);border-radius:3px;margin:0 auto 18px;}
 .modal-title{font-family:var(--display);font-weight:800;font-size:30px;letter-spacing:.01em;margin-bottom:14px;}
 .modal-input{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:16px;padding:14px 16px;color:var(--text);font-family:var(--sans);font-size:16px;outline:none;margin-bottom:10px;}
@@ -372,7 +374,7 @@ button{font-family:var(--sans);}
 .rpe-option:active,.rpe-option.sel{background:var(--accent-dim);color:var(--accent);border-color:var(--accent-border);}
 .rpe-clear{width:100%;min-height:46px;border-radius:16px;background:var(--card2);border:1px solid var(--border);color:var(--text2);font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;}
 
-#toast{position:fixed;bottom:calc(env(safe-area-inset-bottom, 0px) + var(--nav-h) + 22px - var(--nav-shift,0px));left:50%;transform:translateX(-50%) translateY(14px);background:color-mix(in srgb,var(--card3) 88%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--border);border-radius:999px;padding:12px 22px;font-size:14px;font-weight:600;z-index:999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.4);}
+#toast{position:fixed;bottom:calc(var(--nav-h) + 22px + env(safe-area-inset-bottom, 0px) * .3 - var(--d,0px));left:50%;transform:translateX(-50%) translateY(14px);background:color-mix(in srgb,var(--card3) 88%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--border);border-radius:999px;padding:12px 22px;font-size:14px;font-weight:600;z-index:999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.4);}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
 /* ── boş durumlar ── */
@@ -721,16 +723,20 @@ function fmtLong(s) {
 // NAV
 // ═══════════════════════════════════════════════
 function goScreen(name, btn) {
+  const prevScr = document.querySelector('.screen.active');
+  if (prevScr) prevScr.dataset.sy = window.scrollY;
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('screen' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
   if (btn) btn.classList.add('active');
   else { const b = document.querySelector(`.nav-btn[data-screen="${name}"]`); if (b) b.classList.add('active'); }
-  fixNavGap();
   if (name === 'today') renderWeekStrip();
   if (name === 'calendar') renderCalendar();
   if (name === 'progress') renderProgress();
   if (name === 'settings') renderSettings();
+  const nowScr = document.querySelector('.screen.active');
+  window.scrollTo(0, nowScr ? (+nowScr.dataset.sy || 0) : 0);
+  fixNav();
 }
 
 // ═══════════════════════════════════════════════
@@ -888,10 +894,9 @@ function renderToday() {
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>${done ? 'Tamamlandı' : 'Antrenman tamam'}
   </button><div style="height:28px;"></div>`;
 
-  const scr = content.closest('.screen');
-  const st = scr ? scr.scrollTop : 0;
+  const st = window.scrollY;
   content.innerHTML = html;
-  if (scr) scr.scrollTop = st;
+  window.scrollTo(0, st);
   initDragDrop();
   updateRestUI();
 }
@@ -2289,7 +2294,7 @@ function renderSettings() {
     </div>
   </div>
   <input type="file" id="importFile" accept=".json" style="display:none" onchange="handleImport(event)">
-  <div style="margin:18px 6px 0;font-size:11.5px;color:var(--text3);line-height:1.5;">Ekran bilgisi: sayfa ${window.innerHeight} · ekran ${screen.height} · gövde ${Math.round(document.body.getBoundingClientRect().height)} · ana ekran ${window.navigator.standalone === true ? 'evet' : 'hayır'} · menü kayması ${_navShift} · sürüm v14</div>
+  <div style="margin:18px 6px 0;font-size:11.5px;color:var(--text3);line-height:1.5;">Ekran bilgisi: sayfa ${window.innerHeight} · ekran ${screen.height} · gövde ${Math.round(document.body.getBoundingClientRect().height)} · ana ekran ${window.navigator.standalone === true ? 'evet' : 'hayır'} · menü kayması ${_d} · sürüm v16</div>
   <div style="height:24px;"></div>`;
 }
 
@@ -2375,35 +2380,29 @@ setInterval(checkNewDay, 60000);
 // ═══════════════════════════════════════════════
 
 
-// iPhone ana ekran modunda sabit (fixed) öğeler kısa sayfada yanlış yere oturabiliyor.
-// Menünün gerçek konumunu ölç; olması gerekenden aşağıda boşluk kalıyorsa farkı kapat.
-let _navShift = 0;
-function fixNavGap() {
+// iPhone ana ekran modunda sabit menü kısa sayfada yukarıda kalabiliyor: gerçek ekran altına göre düzelt
+let _d = 0;
+function fixNav() {
   try {
     const root = document.documentElement;
-    const standalone = window.navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
-    root.style.setProperty('--nav-shift', '0px'); _navShift = 0;
-    if (!standalone || window.innerHeight < window.innerWidth) return;
-    const ae = document.activeElement;
-    if (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) return;     // klavye açıkken ölçme
-    let probe = document.getElementById('safeProbe');
-    if (!probe) {
-      probe = document.createElement('div'); probe.id = 'safeProbe';
-      probe.style.cssText = 'position:fixed;left:0;bottom:0;width:1px;height:env(safe-area-inset-bottom, 0px);pointer-events:none;visibility:hidden';
-      document.body.appendChild(probe);
-    }
-    const safe = probe.getBoundingClientRect().height || 0;
-    const nav = document.getElementById('nav');
-    const gap = screen.height - nav.getBoundingClientRect().bottom;     // menü ekran altından ne kadar uzakta
-    const diff = gap - (safe + 6);                                        // olması gereken: güvenli alan + 6
-    if (diff > 16) { _navShift = Math.round(diff); root.style.setProperty('--nav-shift', _navShift + 'px'); }
+    if (!(window.navigator.standalone === true)) return;
+    if (innerWidth > innerHeight) return;
+    const n = document.getElementById('nav'); if (!n || getComputedStyle(n).display === 'none') return;
+    root.style.setProperty('--d', '0px'); _d = 0;
+    const sh = Math.max(screen.height, screen.width);
+    const gap = sh - n.getBoundingClientRect().bottom;
+    const d = Math.round(gap - 16);
+    if (Math.abs(d) > 2 && Math.abs(d) < 160) { _d = d; root.style.setProperty('--d', d + 'px'); }
   } catch (e) {}
 }
-['resize', 'pageshow', 'load', 'orientationchange'].forEach(ev => window.addEventListener(ev, () => { fixNavGap(); setTimeout(fixNavGap, 300); }));
-document.addEventListener('visibilitychange', () => { if (!document.hidden) fixNavGap(); });
-document.addEventListener('focusout', () => setTimeout(fixNavGap, 350));
-if (window.visualViewport) visualViewport.addEventListener('resize', () => setTimeout(fixNavGap, 100));
-fixNavGap();
+['load', 'resize', 'orientationchange', 'pageshow', 'focusout'].forEach(ev => window.addEventListener(ev, () => { fixNav(); setTimeout(fixNav, 250); setTimeout(fixNav, 900); }));
+document.addEventListener('click', () => setTimeout(fixNav, 350));
+// Yazı alanı açıkken menüyü gizle (klavye menüyü havada bırakıyor), kapanınca yerine koy
+const typing = e => /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !/^(checkbox|radio|file|range|button)$/.test(e.target.type || '');
+document.addEventListener('focusin', e => { if (typing(e)) document.body.classList.add('kb'); });
+document.addEventListener('focusout', e => { if (!typing(e)) return; setTimeout(() => { if (typing({ target: document.activeElement || document.body })) return; document.body.classList.remove('kb'); window.scrollTo(0, window.scrollY); fixNav(); }, 200); });
+if (window.visualViewport) visualViewport.addEventListener('resize', () => setTimeout(fixNav, 100));
+fixNav();
 loadDB();
 renderToday();
 </script>
