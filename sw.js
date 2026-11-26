@@ -1,8 +1,9 @@
-const CACHE_NAME = 'gymtracker-v9';
+const CACHE_NAME = 'gymtracker-v2';
 const ASSETS = [
   './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap'
 ];
 
 self.addEventListener('install', e => {
