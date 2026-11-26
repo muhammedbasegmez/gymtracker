@@ -76,7 +76,7 @@ button{font-family:var(--sans);}
 
 /* ── alt menü: yüzen cam çubuk ── */
 #nav{
-  position:fixed;z-index:50;left:14px;right:14px;
+  position:absolute;z-index:50;left:14px;right:14px;
   bottom:calc(env(safe-area-inset-bottom, 0px) + 6px);
   display:flex;gap:2px;padding:6px;
   border-radius:32px;
@@ -152,7 +152,7 @@ button{font-family:var(--sans);}
 .alt-chip.on{background:var(--c,var(--accent));color:#121314;}
 .exercise-card.collapsed .alt-row{display:none !important;}
 .orph{font-size:12px;color:var(--text3);margin-top:3px;}
-.editor{position:fixed;inset:0;z-index:150;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top, 0px) + 10px) 14px calc(env(safe-area-inset-bottom, 0px) + 40px);}
+.editor{position:absolute;inset:0;z-index:150;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top, 0px) + 10px) 14px calc(env(safe-area-inset-bottom, 0px) + 40px);}
 .editor.hidden{display:none;}
 .ed-head{display:flex;align-items:center;gap:12px;padding:6px 0 16px;}
 .ed-title{font-family:var(--display);font-weight:800;font-size:36px;line-height:1;}
@@ -357,7 +357,7 @@ button{font-family:var(--sans);}
 .set-sec-title{font-size:13px;font-weight:600;color:var(--text2);padding:18px 20px 8px;}
 
 /* ── alt sayfa (modal) ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:flex-end;justify-content:center;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
+.modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:flex-end;justify-content:center;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
 .modal-overlay.hidden{display:none;}
 .modal{background:var(--card);border-radius:32px 32px 0 0;border:1px solid var(--border);border-bottom:none;padding:12px 18px calc(22px + env(safe-area-inset-bottom, 0px));width:100%;max-width:520px;max-height:88vh;overflow-y:auto;}
 .modal-handle{width:42px;height:5px;background:rgba(255,255,255,.2);border-radius:3px;margin:0 auto 18px;}
@@ -372,7 +372,7 @@ button{font-family:var(--sans);}
 .rpe-option:active,.rpe-option.sel{background:var(--accent-dim);color:var(--accent);border-color:var(--accent-border);}
 .rpe-clear{width:100%;min-height:46px;border-radius:16px;background:var(--card2);border:1px solid var(--border);color:var(--text2);font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;}
 
-#toast{position:fixed;bottom:calc(env(safe-area-inset-bottom, 0px) + var(--nav-h) + 22px);left:50%;transform:translateX(-50%) translateY(14px);background:color-mix(in srgb,var(--card3) 88%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--border);border-radius:999px;padding:12px 22px;font-size:14px;font-weight:600;z-index:999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.4);}
+#toast{position:absolute;bottom:calc(env(safe-area-inset-bottom, 0px) + var(--nav-h) + 22px);left:50%;transform:translateX(-50%) translateY(14px);background:color-mix(in srgb,var(--card3) 88%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--border);border-radius:999px;padding:12px 22px;font-size:14px;font-weight:600;z-index:999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.4);}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
 /* ── boş durumlar ── */
@@ -2371,6 +2371,22 @@ setInterval(checkNewDay, 60000);
 // ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
+
+// iPhone ana ekran uygulamasında sayfa yüksekliği bazen ekrandan kısa kalıyor (altta boşluk).
+// Dikeyde ekran yüksekliğini kullanarak tüm uygulamayı en alta kadar uzat.
+function fitApp() {
+  try {
+    const standalone = window.navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+    const portrait = window.innerHeight >= window.innerWidth;
+    if (standalone && portrait && screen.height > window.innerHeight) {
+      document.body.style.height = screen.height + 'px'; document.body.style.bottom = 'auto';
+    } else { document.body.style.height = ''; document.body.style.bottom = ''; }
+  } catch (e) {}
+}
+window.addEventListener('resize', fitApp);
+window.addEventListener('orientationchange', () => setTimeout(fitApp, 250));
+window.addEventListener('pageshow', fitApp);
+fitApp();
 loadDB();
 renderToday();
 </script>
