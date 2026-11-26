@@ -114,6 +114,69 @@ button{font-family:var(--sans);}
 }
 .screen-title{font-family:var(--display);font-weight:800;font-size:42px;line-height:1;letter-spacing:.01em;color:var(--text);}
 
+
+/* ── odak modu ── */
+.focus-bar{position:sticky;top:calc(env(safe-area-inset-top, 0px) + 64px);z-index:15;display:flex;align-items:center;gap:8px;margin:0 0 10px;padding:8px 14px 10px;background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);}
+.fb-main{flex:1;min-width:0;}
+.fb-text{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums;}
+.fb-text b{color:var(--text);font-weight:700;font-size:15px;}
+.fb-track{height:5px;border-radius:3px;background:var(--card3);overflow:hidden;}
+.fb-track i{display:block;height:100%;width:0;background:var(--c,var(--accent));border-radius:3px;transition:width .3s ease;}
+.fb-btn{flex:none;min-width:36px;height:36px;padding:0 8px;border-radius:18px;background:transparent;border:1px solid transparent;color:var(--text3);display:inline-flex;align-items:center;justify-content:center;gap:5px;font-family:var(--sans);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer;}
+.fb-btn:active{background:var(--card2);}
+.fb-btn.on{color:var(--text);}
+.fb-btn.run{background:var(--accent-dim);border-color:var(--accent-border);color:var(--accent);}
+.fb-btn.fin{background:var(--green-dim);border-color:var(--green-border);color:var(--green);}
+.exercise-card{scroll-margin-top:calc(env(safe-area-inset-top, 0px) + 64px + 64px);}
+.exercise-card.active{border-color:color-mix(in srgb,var(--c,var(--accent)) 60%,transparent);}
+.ex-count{flex:none;font-family:var(--display);font-weight:700;font-size:20px;color:var(--text3);font-variant-numeric:tabular-nums;padding:0 4px;}
+.ex-count.full{color:var(--green);display:inline-flex;align-items:center;}
+.exercise-card.collapsed .exercise-header{padding:11px 12px 11px 6px;cursor:pointer;}
+.exercise-card.collapsed .exercise-name{font-size:19px;color:var(--text2);}
+.exercise-card.collapsed.alldone .exercise-name{color:var(--text3);}
+.exercise-card.collapsed .prev-banner,.exercise-card.collapsed .exercise-note-wrap,.exercise-card.collapsed .set-header,.exercise-card.collapsed .sets-container,.exercise-card.collapsed .add-set-row,.exercise-card.collapsed .pr-badge,.exercise-card.collapsed .note-btn{display:none !important;}
+.exercise-card.collapsed.card-pr,.exercise-card.collapsed.card-drop{border-left-width:1px;border-left-color:var(--border);}
+.set-chk{flex:none;width:46px;height:54px;border-radius:16px;background:var(--card2);border:1.5px solid var(--border);color:var(--text3);opacity:.9;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .12s,border-color .12s;}
+.set-chk:active{transform:scale(.94);}
+.set-row.done .set-chk{background:var(--c,var(--accent));border-color:var(--c,var(--accent));color:#121314;opacity:1;}
+.set-row.done .set-input,.set-row.done .rpe-btn{background:color-mix(in srgb,var(--c,var(--accent)) 12%,var(--card2));}
+.set-row .set-del-btn{min-width:26px;}
+.set-col-label{font-size:13px;color:var(--text2);}
+.col-del{min-width:26px;}.col-chk{min-width:46px;}
+.set-header,.sets-container .set-row{gap:6px;}
+
+
+/* ── program düzenleme ── */
+.alt-row{display:flex;gap:4px;margin:0 14px 10px;padding:4px;background:var(--card2);border-radius:16px;}
+.alt-chip{flex:1;min-height:40px;border:none;background:transparent;color:var(--text2);font-family:var(--sans);font-size:13.5px;font-weight:600;border-radius:12px;cursor:pointer;padding:6px 8px;line-height:1.2;}
+.alt-chip.on{background:var(--c,var(--accent));color:#121314;}
+.exercise-card.collapsed .alt-row{display:none !important;}
+.orph{font-size:12px;color:var(--text3);margin-top:3px;}
+.editor{position:fixed;inset:0;z-index:150;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top, 0px) + 10px) 14px calc(env(safe-area-inset-bottom, 0px) + 40px);}
+.editor.hidden{display:none;}
+.ed-head{display:flex;align-items:center;gap:12px;padding:6px 0 16px;}
+.ed-title{font-family:var(--display);font-weight:800;font-size:36px;line-height:1;}
+.ed-sub{font-size:13px;color:var(--text2);margin-top:4px;}
+.ed-row{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:8px 10px 8px 6px;margin-bottom:8px;}
+.ed-mv{display:flex;flex-direction:column;gap:2px;}
+.ed-mv button{width:36px;height:30px;background:none;border:none;color:var(--text2);display:flex;align-items:center;justify-content:center;border-radius:10px;cursor:pointer;}
+.ed-mv button:disabled{opacity:.22;}
+.ed-mv button:active{background:var(--card2);}
+.ed-main{flex:1;min-width:0;padding:4px 2px;cursor:pointer;}
+.ed-name{font-family:var(--display);font-weight:700;font-size:21px;line-height:1.1;}
+.ed-meta{font-size:12.5px;color:var(--text2);margin-top:3px;}
+.ed-add{width:100%;margin-top:8px;min-height:52px;}
+.fld{margin-bottom:12px;}
+.fld label{display:block;font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:6px;}
+.fld .modal-input{margin-bottom:0;}
+.fld small{display:block;font-size:12px;color:var(--text3);margin-top:5px;line-height:1.4;}
+.fld-row{display:flex;gap:10px;}.fld-row .fld{flex:1;min-width:0;}
+.chk{display:flex;align-items:flex-start;gap:12px;font-size:14px;color:var(--text);margin:8px 0 12px;line-height:1.35;}
+.chk input{width:22px;height:22px;flex:none;accent-color:var(--accent);margin-top:1px;}
+.chk small{display:block;color:var(--text3);font-size:12px;margin-top:2px;}
+.xrow{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+.xrow .modal-input{margin-bottom:0;flex:1;}
+
 /* ── butonlar ── */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 16px;min-height:44px;border-radius:16px;border:none;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s,transform .12s;-webkit-touch-callout:none;}
 .btn:active{opacity:.8;transform:scale(.97);}
@@ -309,7 +372,7 @@ button{font-family:var(--sans);}
 .rpe-option:active,.rpe-option.sel{background:var(--accent-dim);color:var(--accent);border-color:var(--accent-border);}
 .rpe-clear{width:100%;min-height:46px;border-radius:16px;background:var(--card2);border:1px solid var(--border);color:var(--text2);font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;}
 
-#toast{position:fixed;top:calc(env(safe-area-inset-top, 0px) + 12px);left:50%;transform:translateX(-50%) translateY(-14px);background:color-mix(in srgb,var(--card3) 88%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--border);border-radius:999px;padding:12px 22px;font-size:14px;font-weight:600;z-index:999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.4);}
+#toast{position:fixed;bottom:calc(env(safe-area-inset-bottom, 0px) + var(--nav-h) + 22px);left:50%;transform:translateX(-50%) translateY(14px);background:color-mix(in srgb,var(--card3) 88%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--border);border-radius:999px;padding:12px 22px;font-size:14px;font-weight:600;z-index:999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.4);}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
 /* ── boş durumlar ── */
@@ -347,6 +410,36 @@ button{font-family:var(--sans);}
 details summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;min-height:36px;color:var(--text2);font-size:13px;font-weight:600;}
 details summary::-webkit-details-marker{display:none;}
 details[open] summary{color:var(--text);}
+
+/* ── geçen seans: doldur düğmesi ve artış ipucu ── */
+.prev-body{flex:1;min-width:0;}
+.prev-hint{color:var(--accent);font-weight:600;margin-top:4px;}
+.prev-fill{flex:none;align-self:center;min-height:40px;padding:0 14px;border-radius:14px;border:1px solid var(--border);background:var(--card3);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.prev-fill:active{transform:scale(.96);}
+.prev-fill.up{background:var(--accent-dim);border-color:var(--accent-border);color:var(--accent);}
+/* ── haftalık özet ── */
+.week-strip{display:flex;align-items:center;gap:14px;margin:12px 14px 0;padding:11px 16px;background:var(--card);border:1px solid var(--border);border-radius:20px;}
+.week-plates{display:flex;gap:6px;flex:none;}
+.week-plates .plate{--s:24px;}
+.plate.empty{background:none;-webkit-mask:none;mask:none;border:2px dashed rgba(255,255,255,.24);}
+.ws-main{font-size:14.5px;font-weight:600;color:var(--text);}
+.ws-sub{font-size:12.5px;color:var(--text2);margin-top:2px;line-height:1.35;}
+.ws-sub .up{color:var(--green);font-weight:600;}.ws-sub .down{color:var(--red);font-weight:600;}
+.stepper{display:flex;align-items:center;gap:10px;}
+.stepper .btn-icon{font-size:22px;line-height:1;font-weight:500;}
+.stepper-val{font-family:var(--display);font-weight:800;font-size:28px;min-width:22px;text-align:center;}
+/* ── rekorlar ── */
+.rec-note{font-size:12.5px;color:var(--text3);padding:0 20px 10px;}
+.rec-card{margin:0 14px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.rec-row{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border2);}
+.rec-row:last-child{border-bottom:none;}
+.rec-main{flex:1;min-width:0;}
+.rec-name{font-family:var(--display);font-weight:700;font-size:20px;line-height:1.05;}
+.rec-sub{font-size:12.5px;color:var(--text2);margin-top:3px;}
+.rec-right{text-align:right;flex:none;}
+.rec-val{font-family:var(--display);font-weight:800;font-size:34px;line-height:1;font-variant-numeric:tabular-nums;}
+.rec-val small{font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--text3);margin-left:3px;}
+.rec-new{display:inline-block;font-size:11px;font-weight:700;color:var(--green);background:var(--green-dim);border-radius:999px;padding:2px 8px;margin-bottom:4px;}
 </style>
 </head>
 <body>
@@ -367,6 +460,7 @@ details[open] summary{color:var(--text);}
       </div>
     </div>
     <div class="day-selector" id="daySelectorRow"></div>
+    <div id="weekStrip"></div>
     <div id="todayContent"></div>
   </div>
 
@@ -401,11 +495,13 @@ details[open] summary{color:var(--text);}
   </button>
 </nav>
 
+<div id="progEditor" class="editor hidden"></div>
+
 <script>
 // ═══════════════════════════════════════════════
 // PROGRAM — 8 antrenman tipi (5x PPL + 3x Full Body A/B/C)
 // ═══════════════════════════════════════════════
-const PROGRAM = [
+const PROGRAM_DEFAULT = [
   {
     id:'push_a', name:'PUSH A', type:'push',
     desc:'Üst Göğüs · Ön Omuz · Triceps Güç',
@@ -470,43 +566,105 @@ const PROGRAM = [
     id:'full_a', name:'FULL BODY A', type:'full',
     desc:'Güç Odaklı',
     exercises:[
-      {id:'smith_squat',       name:'Smith Machine Squat',                defSets:3, defReps:5},
-      {id:'incline_db_press',  name:'Incline Dumbbell Press (30°)',       defSets:3, defReps:7},
-      {id:'wide_pulldown',     name:'Wide-Grip Lat Pulldown',             defSets:3, defReps:7},
-      {id:'leg_extension',     name:'Leg Extension',                      defSets:3, defReps:13},
-      {id:'seated_db_lateral', name:'Seated Dumbbell Lateral Raise',      defSets:3, defReps:11},
-      {id:'face_pull',         name:'Face Pull',                          defSets:3, defReps:13},
-      {id:'cable_pushdown',    name:'Cable Triceps Pushdown',             defSets:3, defReps:11},
+      {id:'smith_squat',       name:'Smith Machine Squat',                defSets:3, defReps:5, repHi:6},
+      {id:'incline_db_press',  name:'Incline Dumbbell Press (30°)',       defSets:3, defReps:7, repHi:8},
+      {id:'wide_pulldown',     name:'Wide-Grip Lat Pulldown',             defSets:3, defReps:7, repHi:8},
+      {id:'leg_extension',     name:'Leg Extension',                      defSets:3, defReps:13, repHi:15},
+      {id:'seated_db_lateral', name:'Seated Dumbbell Lateral Raise',      defSets:3, defReps:11, repHi:12},
+      {id:'face_pull',         name:'Face Pull',                          defSets:3, defReps:13, repHi:15},
+      {id:'cable_pushdown',    name:'Cable Triceps Pushdown',             defSets:3, defReps:11, repHi:12},
     ]
   },
   {
     id:'full_b', name:'FULL BODY B', type:'full',
     desc:'Hipertrofi Odaklı',
     exercises:[
-      {id:'chest_row_machine', name:'Chest-Supported / Cable Row',        defSets:3, defReps:9},
-      {id:'leg_press',         name:'Leg Press / Bulgarian Split Squat',  defSets:3, defReps:11},
-      {id:'flat_db_press',     name:'Flat Dumbbell Press (0°)',           defSets:3, defReps:9},
-      {id:'lying_leg_curl',    name:'Lying Leg Curl',                     defSets:3, defReps:11},
-      {id:'seated_db_shoulder',name:'Dumbbell Shoulder Press',            defSets:3, defReps:9},
-      {id:'biceps_curl',       name:'Biceps Curl (Süper Set)',            defSets:3, defReps:11},
-      {id:'cable_pushdown',    name:'Triceps Pushdown (Süper Set)',       defSets:3, defReps:11},
+      {id:'chest_row_machine', name:'Chest-Supported Row Machine',        defSets:3, defReps:9, repHi:10, opts:[{id:'chest_row_machine',name:'Chest-Supported Row Machine'},{id:'cable_row_v',name:'Seated Cable Row (V-Bar)'}]},
+      {id:'leg_press',         name:'Leg Press',                          defSets:3, defReps:11, repHi:12, opts:[{id:'leg_press',name:'Leg Press'},{id:'bulgarian_split_squat',name:'Bulgarian Split Squat'}]},
+      {id:'flat_db_press',     name:'Flat Dumbbell Press (0°)',           defSets:3, defReps:9, repHi:10},
+      {id:'lying_leg_curl',    name:'Lying Leg Curl',                     defSets:3, defReps:11, repHi:12},
+      {id:'seated_db_shoulder',name:'Dumbbell Shoulder Press',            defSets:3, defReps:9, repHi:10},
+      {id:'biceps_curl',       name:'Biceps Curl (Süper Set)',            defSets:3, defReps:11, repHi:12},
+      {id:'cable_pushdown',    name:'Triceps Pushdown (Süper Set)',       defSets:3, defReps:11, repHi:12},
     ]
   },
   {
     id:'full_c', name:'FULL BODY C', type:'full',
     desc:'Hacim / Metabolik',
     exercises:[
-      {id:'deadlift',          name:'Conventional / Trap Bar Deadlift',   defSets:3, defReps:5},
-      {id:'pec_deck_fly',      name:'Pec Deck Fly',                       defSets:3, defReps:11},
-      {id:'neutral_pulldown',  name:'Neutral-Grip Lat Pulldown',          defSets:3, defReps:11},
-      {id:'rdl',               name:'Romanian Deadlift (RDL)',            defSets:3, defReps:9},
-      {id:'rev_pec_deck',      name:'Reverse Pec Deck Fly',               defSets:3, defReps:13},
-      {id:'hammer_curl',       name:'Dumbbell Hammer Curl',               defSets:3, defReps:11},
-      {id:'calf_abs',          name:'Calf Raise / Abs',                   defSets:3, defReps:13},
+      {id:'deadlift',          name:'Conventional Deadlift',              defSets:3, defReps:5, repHi:5, opts:[{id:'deadlift',name:'Conventional Deadlift'},{id:'trap_bar_deadlift',name:'Trap Bar Deadlift'}]},
+      {id:'pec_deck_fly',      name:'Pec Deck Fly',                       defSets:3, defReps:11, repHi:12},
+      {id:'neutral_pulldown',  name:'Neutral-Grip Lat Pulldown',          defSets:3, defReps:11, repHi:12},
+      {id:'rdl',               name:'Romanian Deadlift (RDL)',            defSets:3, defReps:9, repHi:10},
+      {id:'rev_pec_deck',      name:'Reverse Pec Deck Fly',               defSets:3, defReps:13, repHi:15},
+      {id:'hammer_curl',       name:'Dumbbell Hammer Curl',               defSets:3, defReps:11, repHi:12},
+      {id:'calf_abs',          name:'Calf Raise (Baldır)',                defSets:3, defReps:13, repHi:15, opts:[{id:'calf_abs',name:'Calf Raise (Baldır)'},{id:'abs_work',name:'Karın (Abs)'}]},
     ]
   },
 ];
 
+let PROGRAM = JSON.parse(JSON.stringify(PROGRAM_DEFAULT));
+function initProgram() {
+  const ok = Array.isArray(db.program) && db.program.length === PROGRAM_DEFAULT.length;
+  PROGRAM = JSON.parse(JSON.stringify(ok ? db.program : PROGRAM_DEFAULT));
+  if (ok) db.program = PROGRAM; else delete db.program;
+  syncExNames();
+}
+// Hareket adı/kas kaydı: programdan çıkarılan hareketlerin geçmişi de adıyla görünsün
+function syncExNames() {
+  if (!db.exNames) db.exNames = {};
+  PROGRAM.forEach(p => p.exercises.forEach(ex => (ex.opts || [ex]).forEach(o => { db.exNames[o.id] = o.name; })));
+}
+function exName(id) { return (db.exNames && db.exNames[id]) || id; }
+function flatEx(prog) {
+  return prog.exercises.flatMap(ex => ex.opts
+    ? ex.opts.map(o => Object.assign({}, ex, { id: o.id, name: o.name, opts: undefined, slotId: ex.id }))
+    : [ex]);
+}
+function hasData(arr) { return !!arr && arr.some(r => (r.kg !== '' && r.kg !== undefined) || r.done); }
+// Seçenekli hareket (slot): seansta hangi seçenek yapıldıysa onun kimliği kullanılır
+function resolveEx(ex, w) {
+  if (!ex.opts) return Object.assign({}, ex, { slotId: ex.id });
+  const chosen = (w.alt && w.alt[ex.id]) || null;
+  const o = ex.opts.find(x => x.id === chosen) || ex.opts.find(x => hasData(w.sets[x.id])) || ex.opts[0];
+  return Object.assign({}, ex, { id: o.id, name: o.name, slotId: ex.id });
+}
+function sessionExercises(prog, w) {
+  let list = prog.exercises.map(ex => resolveEx(ex, w));
+  if (w.completed) list = list.filter(e => w.sets[e.id] || (w.alt && w.alt[e.slotId]));
+  const used = new Set(list.map(e => e.id));
+  const orphans = [];
+  Object.keys(w.sets || {}).forEach(id => {
+    if (!used.has(id) && hasData(w.sets[id])) orphans.push({ id, slotId: id, name: exName(id), defSets: w.sets[id].length, defReps: '', orphan: true });
+  });
+  if (w.exOrder && list.every(e => w.exOrder.includes(e.slotId))) {
+    const pos = e => { const k = w.exOrder.indexOf(e.slotId); return k < 0 ? 1e6 : k; };
+    list = list.map((e, i) => [e, i]).sort((a, b) => pos(a[0]) - pos(b[0]) || a[1] - b[1]).map(x => x[0]);
+  }
+  return list.concat(orphans);
+}
+function pickAlt(d, slot, optId) {
+  flushPending();
+  const w = db.workouts[d]; if (!w) return;
+  const prog = PROGRAM[w.dayIdx]; const sx = prog && prog.exercises.find(e => e.id === slot); if (!sx) return;
+  const cur = resolveEx(sx, w).id; if (cur === optId) return;
+  const old = w.sets[cur];
+  const targetHas = hasData(w.sets[optId]);
+  if (hasData(old) && !targetHas) {
+    if (!confirm(`Bu seanstaki girdiler "${exName(optId)}" hareketine taşınsın mı?`)) return;
+  }
+  if (!targetHas) {
+    if (hasData(old) || w.completed) {
+      w.sets[optId] = old;
+      if (w.notes && w.notes[cur] !== undefined) { w.notes[optId] = w.notes[cur]; delete w.notes[cur]; }
+    }
+    delete w.sets[cur];
+  }
+  if (!w.alt) w.alt = {};
+  w.alt[slot] = optId;
+  if (window._activeEx === cur) window._activeEx = optId;
+  saveDB(); renderToday();
+}
 const RPE_VALUES = [10, 9.5, 9, 8.5, 8, 7.5, 7, 6.5, 6];
 
 // ═══════════════════════════════════════════════
@@ -516,7 +674,22 @@ let db = { workouts: {} };
 
 function loadDB() {
   try { const s = localStorage.getItem('gt_v4'); if (s) db = JSON.parse(s); } catch(e) {}
+  normalizeDB();
+}
+function normalizeDB() {
   if (!db.workouts) db.workouts = {};
+  // Tek seferlik: set onayı eklenmeden önceki kayıtlarda kg girilmiş setleri 'yapıldı' say
+  if (!db.settings) db.settings = {};
+  if (!db.settings.doneMig) {
+    Object.values(db.workouts).forEach(w => {
+      Object.values(w.sets || {}).forEach(arr => (arr || []).forEach(x => {
+        if (x && x.done === undefined && x.kg !== '' && x.kg !== undefined) x.done = true;
+      }));
+    });
+    db.settings.doneMig = 1;
+    saveDB();
+  }
+  initProgram();
 }
 function saveDB() {
   try { localStorage.setItem('gt_v4', JSON.stringify(db)); } catch(e) {}
@@ -553,6 +726,7 @@ function goScreen(name, btn) {
   document.getElementById('screen' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
   if (btn) btn.classList.add('active');
   else { const b = document.querySelector(`.nav-btn[data-screen="${name}"]`); if (b) b.classList.add('active'); }
+  if (name === 'today') renderWeekStrip();
   if (name === 'calendar') renderCalendar();
   if (name === 'progress') renderProgress();
   if (name === 'settings') renderSettings();
@@ -615,6 +789,7 @@ function pickProg(idx) {
       // Onayladı — veriyi temizle
       w.sets = {};
       w.exOrder = null;
+      w.alt = {};
     }
   }
 
@@ -637,6 +812,7 @@ function renderToday() {
   }
 
   renderDaySelector();
+  renderWeekStrip();
 
   const content = document.getElementById('todayContent');
 
@@ -663,7 +839,7 @@ function renderToday() {
   if (!w.notes) w.notes = {};
 
   // Set şablonlarını hazırla — sadece henüz girilmemiş hareketler için
-  prog.exercises.forEach(ex => {
+  if (!w.completed) sessionExercises(prog, w).forEach(ex => {
     if (!w.sets[ex.id]) {
       const prev = getPrevSets(ex.id, viewDate);
       if (prev && prev.length > 0) {
@@ -679,12 +855,7 @@ function renderToday() {
   });
   saveDB();
 
-  // Hareket sırasını belirle
-  const validOrder = w.exOrder && w.exOrder.length === prog.exercises.length &&
-    prog.exercises.every(ex => w.exOrder.includes(ex.id));
-  const orderedExercises = validOrder
-    ? w.exOrder.map(id => prog.exercises.find(ex => ex.id === id)).filter(Boolean)
-    : prog.exercises;
+  const orderedExercises = sessionExercises(prog, w);
 
   const done = w.completed;
   const roll = !!window._plateRoll; window._plateRoll = false;
@@ -704,21 +875,31 @@ function renderToday() {
     </div>
   </div>
   ${done ? `<div class="done-note"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Antrenman tamamlandı ve kilitlendi. Düzenlemek için kilidi aç.</span></div>` : ''}
-  <div id="exListContainer">`;
+  ${done ? '' : focusBarHtml(orderedExercises, w)}
+  <div id="exListContainer" class="t-${prog.type}">`;
 
-  orderedExercises.forEach(ex => { html += renderExCard(ex, viewDate, w, done); });
+  const focus = !done && focusOn();
+  const activeId = focus ? getActiveEx(orderedExercises, w) : null;
+  orderedExercises.forEach(ex => { html += renderExCard(ex, viewDate, w, done, focus, activeId); });
   html += `</div>`;
 
   html += `<button class="complete-btn ${done ? 'done' : ''}" onclick="toggleComplete('${viewDate}')">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>${done ? 'Tamamlandı' : 'Antrenman tamam'}
   </button><div style="height:28px;"></div>`;
 
+  const scr = content.closest('.screen');
+  const st = scr ? scr.scrollTop : 0;
   content.innerHTML = html;
+  if (scr) scr.scrollTop = st;
   initDragDrop();
+  updateRestUI();
 }
 
-function renderExCard(ex, dateS, w, locked = false) {
+function renderExCard(ex, dateS, w, locked = false, focus = false, activeId = null) {
   const sets = w.sets[ex.id] || [];
+  const nDone = sets.filter(x => x.done).length;
+  const collapsed = focus && ex.id !== activeId;
+  const allDone = sets.length > 0 && nDone === sets.length;
   const prevSets = getPrevSets(ex.id, dateS);
   const prevDate = getPrevDate(ex.id, dateS);
 
@@ -728,7 +909,13 @@ function renderExCard(ex, dateS, w, locked = false) {
     const summary = prevSets.filter(s => s.kg !== '' && s.kg !== undefined)
       .map(s => `${s.kg}kg×${s.reps}`).join(', ');
     if (summary) {
-      ghostHtml = `<div class="prev-banner"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 9 8 9"/><polyline points="12 7 12 12 15 14"/></svg><div><strong>${fmtShort(prevDate)}</strong> · ${summary}</div></div>`;
+      const sug = suggestIncrease(ex, prevSets);
+      const canFill = !locked && sets.some(s => s.kg === '' || s.kg === undefined);
+      const fillBtn = canFill
+        ? `<button class="prev-fill${sug ? ' up' : ''}" onclick="fillFromPrev('${dateS}','${ex.id}',${sug ? sug.inc : 0})">${sug ? '+' + String(sug.inc).replace('.', ',') + ' kg ile al' : 'Aynen al'}</button>`
+        : '';
+      const hint = sug ? `<div class="prev-hint">Tüm setlerde ${sug.hi} tekrara ulaştın. Bu sefer +${String(sug.inc).replace('.', ',')} kg dene.</div>` : '';
+      ghostHtml = `<div class="prev-banner"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 9 8 9"/><polyline points="12 7 12 12 15 14"/></svg><div class="prev-body"><div><strong>${fmtShort(prevDate)}</strong> · ${summary}</div>${hint}</div>${fillBtn}</div>`;
     }
   }
 
@@ -744,6 +931,7 @@ function renderExCard(ex, dateS, w, locked = false) {
     <div class="set-col-label col-kg">kg</div>
     <div class="set-col-label col-reps">tekrar</div>
     <div class="set-col-label col-rpe">RPE</div>
+    ${locked ? '' : '<div class="col-chk"></div>'}
     <div class="col-del"></div>
   </div>`;
 
@@ -751,10 +939,15 @@ function renderExCard(ex, dateS, w, locked = false) {
   let cardPrState = null; // 'up' | 'down' | null
 
   // Kart seviyesi: toplam hacim karşılaştırması
+  // Set onayı kullanıldıysa yalnızca işaretli setler sayılır; geçen seansla aynı sıradaki setler kıyaslanır
+  const useDone = sets.some(x => x.done) && sets.some(x => !x.done);
+  const vol = s => (parseFloat(s.kg)||0)*(parseFloat(s.reps)||0);
   const prevVol = prevSets
-    ? prevSets.reduce((a,s) => a + (parseFloat(s.kg)||0)*(parseFloat(s.reps)||0), 0)
+    ? (useDone
+        ? sets.reduce((a,s,i) => a + (s.done && prevSets[i] ? vol(prevSets[i]) : 0), 0)
+        : prevSets.reduce((a,s) => a + vol(s), 0))
     : 0;
-  const curVol = sets.reduce((a,s) => a + (parseFloat(s.kg)||0)*(parseFloat(s.reps)||0), 0);
+  const curVol = sets.reduce((a,s) => a + (!useDone || s.done ? vol(s) : 0), 0);
   if (prevVol > 0 && curVol > 0) {
     cardPrState = curVol > prevVol ? 'up' : curVol < prevVol ? 'down' : null;
   }
@@ -796,7 +989,7 @@ function renderExCard(ex, dateS, w, locked = false) {
     const dis = locked ? 'disabled style="opacity:.5;pointer-events:none"' : '';
 
     setsHtml += `
-    <div class="set-row" id="sr_${dateS}_${ex.id}_${i}">
+    <div class="set-row${set.done ? ' done' : ''}" id="sr_${dateS}_${ex.id}_${i}">
       ${numLabel}
       <div class="set-input-wrap col-kg">
         <input class="set-input${kgClass ? ' '+kgClass : ''}" type="number" inputmode="decimal"
@@ -817,6 +1010,7 @@ function renderExCard(ex, dateS, w, locked = false) {
         <button class="rpe-btn${set.rpe === '' ? ' empty' : ''}" ${dis}
           onclick="openRpePicker('${dateS}','${ex.id}',${i})">${set.rpe !== '' ? set.rpe : '—'}</button>
       </div>
+      ${locked ? '' : `<button class="set-chk" aria-label="Seti işaretle" onclick="toggleSetDone('${dateS}','${ex.id}',${i})"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>`}
       <button class="set-del-btn" ${dis} onclick="deleteSet('${dateS}','${ex.id}',${i})">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -835,9 +1029,14 @@ function renderExCard(ex, dateS, w, locked = false) {
     else if (pct < 0) prBadge = `<span class="pr-badge down">▼ ${pct.toFixed(0)}% hacim</span>`;
   }
 
+  const altHtml = ex.opts ? '' : '';
+  const slotEx = (PROGRAM[w.dayIdx] && PROGRAM[w.dayIdx].exercises.find(x => x.id === ex.slotId)) || null;
+  const altRow = slotEx && slotEx.opts
+    ? `<div class="alt-row">${slotEx.opts.map(o => `<button class="alt-chip${o.id === ex.id ? ' on' : ''}" onclick="pickAlt('${dateS}','${ex.slotId}','${o.id}')">${o.name}</button>`).join('')}</div>`
+    : '';
   return `
-  <div class="exercise-card ${cardClass}" id="exc_${ex.id}" data-exid="${ex.id}">
-    <div class="exercise-header">
+  <div class="exercise-card ${cardClass}${collapsed ? ' collapsed' : ''}${focus && !collapsed ? ' active' : ''}${collapsed && allDone ? ' alldone' : ''}" id="exc_${ex.id}" data-exid="${ex.id}" data-slot="${ex.slotId || ex.id}">
+    <div class="exercise-header" onclick="hdrTap(event,'${ex.id}')">
       <div class="drag-handle" title="Sırayı değiştir">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="9"  cy="5"  r="1" fill="currentColor"/>
@@ -849,11 +1048,12 @@ function renderExCard(ex, dateS, w, locked = false) {
         </svg>
       </div>
       <div style="flex:1;min-width:0;">
-        <div class="exercise-name">${ex.name}</div>
+        <div class="exercise-name">${ex.name}</div>${ex.orphan ? '<div class="orph">Programda yok · kayıtların duruyor</div>' : ''}
       </div>
       <div class="exercise-hdr-actions">
         ${prBadge}
-        <button class="btn-icon" onclick="toggleNote('${ex.id}')" title="Not">
+        ${collapsed ? (allDone ? '<span class="ex-count full"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>' : `<span class="ex-count">${nDone}/${sets.length}</span>`) : ''}
+        <button class="btn-icon note-btn" onclick="toggleNote('${ex.id}')" title="Not">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
             stroke="${noteValue ? 'var(--accent)' : 'currentColor'}" stroke-width="2">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -862,6 +1062,7 @@ function renderExCard(ex, dateS, w, locked = false) {
         </button>
       </div>
     </div>
+    ${altRow}
     ${ghostHtml}
     <div class="exercise-note-wrap" id="nw_${ex.id}" style="${noteValue ? '' : 'display:none'}">
       ${noteIsInherited ? `<div class="note-inherited"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 3h6l-1 7 3 3H7l3-3z"/></svg>Önceki antrenmandan</div>` : ''}
@@ -877,6 +1078,298 @@ function renderExCard(ex, dateS, w, locked = false) {
     </div>`}
   </div>`;
 }
+
+
+
+// ═══════════════════════════════════════════════
+// PROGRAM DÜZENLEME
+// ═══════════════════════════════════════════════
+let edDay = null, ed = null;
+const MUSCLE_OPTS = () => Object.keys(MUSCLE_MAP).map(k => [k, MUSCLE_MAP[k].label]);
+function commitProgram() {
+  db.program = PROGRAM; syncExNames(); saveDB();
+  if (selectedProgIdx !== null) renderToday();
+}
+function exLabel(ex) { return ex.opts ? ex.opts.map(o => o.name).join(' / ') : ex.name; }
+function openDayEditor(i) {
+  edDay = i;
+  document.getElementById('progEditor').classList.remove('hidden');
+  renderDayEditor();
+  document.getElementById('progEditor').scrollTop = 0;
+}
+function closeDayEditor() {
+  document.getElementById('progEditor').classList.add('hidden');
+  renderSettings();
+}
+function renderDayEditor() {
+  const p = PROGRAM[edDay];
+  const up = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>';
+  const dn = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+  document.getElementById('progEditor').innerHTML = `
+  <div class="ed-head">
+    <button class="btn-icon" onclick="closeDayEditor()" aria-label="Geri"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div><div class="ed-title">${p.name}</div><div class="ed-sub">${p.desc}</div></div>
+  </div>
+  <div class="t-${p.type}">${p.exercises.map((ex, i) => `
+    <div class="ed-row">
+      <div class="ed-mv"><button onclick="moveEx(${i},-1)" ${i === 0 ? 'disabled' : ''} aria-label="Yukarı">${up}</button><button onclick="moveEx(${i},1)" ${i === p.exercises.length - 1 ? 'disabled' : ''} aria-label="Aşağı">${dn}</button></div>
+      <div class="ed-main" onclick="openExEditor(${i})"><div class="ed-name">${exLabel(ex)}</div><div class="ed-meta">${ex.defSets} set · ${ex.defReps}${ex.repHi && ex.repHi !== ex.defReps ? '–' + ex.repHi : ''} tekrar${ex.opts ? ' · ' + ex.opts.length + ' seçenek' : ''}</div></div>
+      <button class="btn-icon" onclick="openExEditor(${i})" aria-label="Düzenle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+    </div>`).join('')}</div>
+  <button class="btn btn-ghost ed-add" onclick="openExEditor(-1)">+ Hareket ekle</button>
+  <div style="font-size:12.5px;color:var(--text3);margin:14px 4px 0;line-height:1.45">Değişiklikler sonraki antrenmanlardan itibaren geçerli olur. Geçmiş kayıtların silinmez.</div>`;
+}
+function moveEx(i, d) {
+  const a = PROGRAM[edDay].exercises, j = i + d;
+  if (j < 0 || j >= a.length) return;
+  [a[i], a[j]] = [a[j], a[i]];
+  commitProgram(); renderDayEditor();
+}
+function openExEditor(idx) {
+  const ex = idx >= 0 ? PROGRAM[edDay].exercises[idx] : null;
+  ed = {
+    idx, name: ex ? ex.name : '',
+    extras: ex && ex.opts ? ex.opts.slice(1).map(o => ({ id: o.id, name: o.name })) : [],
+    sets: ex ? ex.defSets : 3, reps: ex ? ex.defReps : 10, hi: ex && ex.repHi ? ex.repHi : '',
+    drop: !!(ex && ex.defDropSet), muscle: ex ? (muscleOf(ex.id) || 'none') : 'none', diff: false
+  };
+  renderExForm();
+}
+function readEdForm() {
+  const g = id => document.getElementById(id);
+  if (!g('edName')) return;
+  ed.name = g('edName').value;
+  ed.extras.forEach((x, k) => { const el = g('edX' + k); if (el) x.name = el.value; });
+  ed.sets = g('edSets').value; ed.reps = g('edReps').value; ed.hi = g('edHi').value;
+  ed.drop = g('edDrop').checked; ed.muscle = g('edMuscle').value;
+  ed.diff = g('edDiff') ? g('edDiff').checked : false;
+}
+function knownNames() {
+  const set = new Set(Object.values(db.exNames || {}));
+  return [...set].sort((a, b) => a.localeCompare(b, 'tr'));
+}
+function renderExForm() {
+  const isNew = ed.idx < 0;
+  const esc = v => String(v).replace(/"/g, '&quot;');
+  showModal(`
+    <div class="modal-title">${isNew ? 'Hareket ekle' : 'Hareketi düzenle'}</div>
+    <div class="fld"><label for="edName">${ed.extras.length ? 'Seçenek 1' : 'Hareket adı'}</label>
+      <input id="edName" class="modal-input" list="knownEx" value="${esc(ed.name)}" placeholder="Örn. Cable Fly" autocomplete="off" autocapitalize="words" oninput="edHint()">
+      <small id="edHintTxt"></small></div>
+    ${ed.extras.map((x, k) => `
+    <div class="fld"><label for="edX${k}">Seçenek ${k + 2}</label>
+      <div class="xrow"><input id="edX${k}" class="modal-input" list="knownEx" value="${esc(x.name)}" placeholder="Hareket adı" autocomplete="off" autocapitalize="words">
+      <button class="btn-icon" onclick="rmExtra(${k})" aria-label="Seçeneği kaldır">✕</button></div></div>`).join('')}
+    <button class="btn btn-ghost btn-sm" style="margin-bottom:14px" onclick="addExtra()">+ Seçenek ekle</button>
+    <datalist id="knownEx">${knownNames().map(n => `<option value="${esc(n)}">`).join('')}</datalist>
+    <div class="fld-row">
+      <div class="fld"><label for="edSets">Set</label><input id="edSets" class="modal-input" type="number" inputmode="numeric" value="${ed.sets}"></div>
+      <div class="fld"><label for="edReps">Tekrar</label><input id="edReps" class="modal-input" type="number" inputmode="numeric" value="${ed.reps}"></div>
+      <div class="fld"><label for="edHi">Üst tekrar</label><input id="edHi" class="modal-input" type="number" inputmode="numeric" value="${ed.hi}" placeholder="—"></div>
+    </div>
+    <div class="fld" style="margin-top:-6px"><small>Üst tekrar boş değilse, tüm setlerde o sayıya ulaşınca "+2,5 kg dene" önerisi çıkar.</small></div>
+    <div class="fld"><label for="edMuscle">Kas grubu (vücut haritası için)</label>
+      <select id="edMuscle" class="modal-input">${MUSCLE_OPTS().map(([k, l]) => `<option value="${k}"${ed.muscle === k ? ' selected' : ''}>${l}</option>`).join('')}<option value="none"${ed.muscle === 'none' ? ' selected' : ''}>Haritada gösterme</option></select></div>
+    <label class="chk"><input id="edDrop" type="checkbox"${ed.drop ? ' checked' : ''}><span>Sona drop set ekle</span></label>
+    ${isNew ? '' : `<label class="chk"><input id="edDiff" type="checkbox"${ed.diff ? ' checked' : ''}><span>Bu artık farklı bir hareket<small>İşaretlersen geçmiş kg'lar yeni harekete geçmez. İşaretlemezsen sadece ad/ayar düzeltilir, geçmiş devam eder.</small></span></label>`}
+    <div class="modal-btns">
+      ${isNew ? '<button class="btn btn-ghost" onclick="closeModal()">İptal</button>' : '<button class="btn btn-danger" onclick="delEx()">Programdan çıkar</button>'}
+      <button class="btn btn-primary" onclick="saveEx()">Kaydet</button>
+    </div>
+    <div style="height:6px"></div>`);
+  edHint();
+}
+function addExtra() { readEdForm(); ed.extras.push({ id: null, name: '' }); renderExForm(); setTimeout(() => { const el = document.getElementById('edX' + (ed.extras.length - 1)); if (el) el.focus(); }, 50); }
+function rmExtra(k) { readEdForm(); ed.extras.splice(k, 1); renderExForm(); }
+function idByName(name) {
+  const n = name.trim().toLocaleLowerCase('tr');
+  const ids = Object.keys(db.exNames || {});
+  const hit = ids.find(id => db.exNames[id].toLocaleLowerCase('tr') === n);
+  return hit || null;
+}
+function newExId(name) {
+  const slug = name.toLowerCase().replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g,'u').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0, 24) || 'hareket';
+  let id; do { id = 'c_' + slug + '_' + Math.random().toString(36).slice(2, 5); } while (db.exNames && db.exNames[id]);
+  return id;
+}
+function edHint() {
+  const el = document.getElementById('edHintTxt'), inp = document.getElementById('edName'); if (!el || !inp) return;
+  const hit = idByName(inp.value); const cur = ed.idx >= 0 ? PROGRAM[edDay].exercises[ed.idx].id : null;
+  el.textContent = hit && hit !== cur ? 'Bu hareketin geçmişi var, geçmiş kg\'ların buradan devam eder.' : '';
+}
+function saveEx() {
+  readEdForm();
+  const name = ed.name.trim();
+  if (!name) { showToast('Hareket adı gerekli'); return; }
+  const sets = Math.min(10, Math.max(1, parseInt(ed.sets) || 3));
+  const reps = Math.min(60, Math.max(1, parseInt(ed.reps) || 10));
+  const hi = parseInt(ed.hi) > 0 ? Math.max(reps, parseInt(ed.hi)) : 0;
+  const p = PROGRAM[edDay];
+  const old = ed.idx >= 0 ? p.exercises[ed.idx] : null;
+  const mainId = (old && !ed.diff) ? old.id : (idByName(name) || newExId(name));
+  const opts = [{ id: mainId, name }];
+  ed.extras.forEach(x => {
+    const nm = x.name.trim(); if (!nm) return;
+    const id = x.id || idByName(nm) || newExId(nm);
+    if (opts.some(o => o.id === id)) return;
+    opts.push({ id, name: nm });
+  });
+  const ex = { id: mainId, name, defSets: sets, defReps: reps };
+  if (hi) ex.repHi = hi;
+  if (ed.drop) ex.defDropSet = true;
+  if (opts.length > 1) ex.opts = opts;
+  opts.forEach(o => { if (!db.exMuscle) db.exMuscle = {}; db.exMuscle[o.id] = ed.muscle; });
+  if (old) p.exercises[ed.idx] = ex; else p.exercises.push(ex);
+  commitProgram(); closeModal(); renderDayEditor();
+  showToast(old ? 'Hareket güncellendi' : 'Hareket eklendi');
+}
+function delEx() {
+  const p = PROGRAM[edDay], ex = p.exercises[ed.idx];
+  if (p.exercises.length <= 1) { showToast('Günde en az 1 hareket kalmalı'); return; }
+  if (!confirm(`"${exLabel(ex)}" bu günün programından çıkarılsın mı? Geçmiş kayıtların silinmez.`)) return;
+  p.exercises.splice(ed.idx, 1);
+  commitProgram(); closeModal(); renderDayEditor();
+  showToast('Programdan çıkarıldı');
+}
+function resetProgram() {
+  if (!confirm('Program varsayılana dönsün mü? Hareket düzenlemelerin silinir, antrenman geçmişin kalır.')) return;
+  delete db.program; initProgram(); saveDB(); renderSettings();
+  if (selectedProgIdx !== null) renderToday();
+  showToast('Program sıfırlandı');
+}
+
+// ═══════════════════════════════════════════════
+// ODAK MODU · SET ONAYI · DİNLENME SAYACI
+// ═══════════════════════════════════════════════
+function focusOn() { return !(db.settings && db.settings.focus === false); }
+function setFocus(v) {
+  flushPending();
+  if (!db.settings) db.settings = {};
+  db.settings.focus = v; saveDB(); window._activeEx = null; renderToday();
+}
+function getActiveEx(list, w) {
+  const open = ex => (w.sets[ex.id] || []).some(x => !x.done);
+  const cur = list.find(ex => ex.id === window._activeEx);
+  if (cur && w.dayIdx === window._activeDay && viewDate === window._activeDate) return cur.id;
+  const nxt = list.find(open);
+  window._activeEx = nxt ? nxt.id : null;
+  window._activeDay = w.dayIdx; window._activeDate = viewDate;
+  return window._activeEx;
+}
+function hdrTap(ev, id) {
+  const card = document.getElementById('exc_' + id);
+  if (!card || !card.classList.contains('collapsed')) return;
+  if (ev.target.closest('.drag-handle')) return;
+  flushPending();
+  window._activeEx = id; window._activeDate = viewDate; window._activeDay = selectedProgIdx;
+  renderToday();
+  scrollToEx(id);
+}
+function scrollToEx(id) {
+  requestAnimationFrame(() => {
+    const el = document.getElementById('exc_' + id);
+    if (el) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  });
+}
+function focusBarHtml(list, w) {
+  const all = list.reduce((a, ex) => a.concat(w.sets[ex.id] || []), []);
+  const dn = all.filter(x => x.done).length;
+  const exDone = list.filter(ex => (w.sets[ex.id] || []).length && (w.sets[ex.id] || []).every(x => x.done)).length;
+  const pct = all.length ? Math.round(dn / all.length * 100) : 0;
+  const prog = PROGRAM[w.dayIdx];
+  const f = focusOn();
+  return `<div class="focus-bar t-${prog ? prog.type : 'full'}">
+    <div class="fb-main"><div class="fb-text"><b>${dn}</b>/${all.length} set · ${exDone}/${list.length} hareket</div><div class="fb-track"><i style="width:${pct}%"></i></div></div>
+    <button class="fb-btn" id="restBtn" onclick="restTap()" aria-label="Dinlenme sayacı"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><polyline points="12 9 12 13 14.5 14.5"/><path d="M9.5 2.5h5"/></svg><span id="restTxt"></span></button>
+    <button class="fb-btn${f ? ' on' : ''}" onclick="setFocus(${!f})" aria-label="${f ? 'Tüm hareketleri göster' : 'Odak moduna geç'}" title="${f ? 'Tümünü göster' : 'Odak modu'}">${f
+      ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>'
+      : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>'}</button>
+  </div>`;
+}
+function toggleSetDone(d, e, i) {
+  flushPending();
+  const w = db.workouts[d]; const s = w && w.sets[e] && w.sets[e][i];
+  if (!s || w.completed) return;
+  s.done = !s.done;
+  if (s.done) {
+    // Silik (hayalet) kg varsa ve boşsa, yapılan kg olarak kabul et
+    const p = getPrevSets(e, d);
+    if ((s.kg === '' || s.kg === undefined) && p && p.length) {
+      const q = p[Math.min(i, p.length - 1)];
+      if (q && q.kg !== '' && q.kg !== undefined) s.kg = q.kg;
+    }
+    if (db.settings && db.settings.restAuto) startRest();
+  }
+  saveDB();
+  let advance = false;
+  if (s.done && focusOn() && window._activeEx === e && w.sets[e].every(x => x.done)) {
+    const lst = sessionExercises(PROGRAM[w.dayIdx], w);
+    const k = lst.findIndex(x => x.id === e);
+    const open = id => (w.sets[id] || []).some(x => !x.done);
+    const nx = lst.slice(k + 1).concat(lst.slice(0, k)).find(x => open(x.id));
+    const nxt = nx ? nx.id : null;
+    window._activeEx = nxt || null; window._activeDate = d; window._activeDay = w.dayIdx;
+    advance = true;
+    if (!nxt) showToast('Tüm hareketler tamam');
+  }
+  renderToday();
+  if (advance && window._activeEx) scrollToEx(window._activeEx);
+}
+
+// Dinlenme sayacı: zaman damgasıyla çalışır, ekran kapanıp açılınca şaşmaz
+const rest = { end: 0, iv: null, fin: 0, ctx: null };
+function getRestSec() { const v = db.settings && parseInt(db.settings.restSec); return v >= 15 && v <= 600 ? v : 90; }
+function startRest() {
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) { rest.ctx = rest.ctx || new AC(); if (rest.ctx.state === 'suspended') rest.ctx.resume(); }
+  } catch (e) {}
+  rest.end = Date.now() + getRestSec() * 1000; rest.fin = 0;
+  clearInterval(rest.iv); rest.iv = setInterval(restTick, 250);
+  updateRestUI();
+}
+function stopRest() { clearInterval(rest.iv); rest.iv = null; rest.end = 0; rest.fin = 0; updateRestUI(); }
+function restTap() { if (rest.end || rest.fin) stopRest(); else startRest(); }
+function restTick() {
+  if (rest.end && Date.now() >= rest.end) {
+    clearInterval(rest.iv); rest.iv = null; rest.end = 0; rest.fin = Date.now();
+    beep(); try { if (navigator.vibrate) navigator.vibrate([200, 100, 200]); } catch (e) {}
+    setTimeout(() => { if (rest.fin && Date.now() - rest.fin >= 7900) stopRest(); }, 8000);
+  }
+  updateRestUI();
+}
+function beep() {
+  try {
+    const c = rest.ctx; if (!c) return;
+    [0, 0.22].forEach(t => {
+      const o = c.createOscillator(), g = c.createGain();
+      o.frequency.value = 880; o.connect(g); g.connect(c.destination);
+      const now = c.currentTime + t;
+      g.gain.setValueAtTime(0.0001, now); g.gain.exponentialRampToValueAtTime(0.25, now + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+      o.start(now); o.stop(now + 0.2);
+    });
+  } catch (e) {}
+}
+function updateRestUI() {
+  const b = document.getElementById('restBtn'), t = document.getElementById('restTxt');
+  if (!b || !t) return;
+  if (rest.end) {
+    const left = Math.max(0, Math.ceil((rest.end - Date.now()) / 1000));
+    t.textContent = Math.floor(left / 60) + ':' + pad(left % 60);
+    b.className = 'fb-btn run';
+  } else if (rest.fin) { t.textContent = 'Hazır'; b.className = 'fb-btn fin'; }
+  else { t.textContent = ''; b.className = 'fb-btn'; }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden && (rest.end || rest.fin)) restTick(); });
+function setRestSec(n) {
+  if (!db.settings) db.settings = {};
+  db.settings.restSec = Math.min(300, Math.max(30, getRestSec() + n)); saveDB(); renderSettings();
+}
+function toggleRestAuto() {
+  if (!db.settings) db.settings = {};
+  db.settings.restAuto = !db.settings.restAuto; saveDB(); renderSettings();
+}
+function fmtRestSec(n) { return Math.floor(n / 60) + ':' + pad(n % 60); }
 
 // ═══════════════════════════════════════════════
 // INPUT — 500ms debounce, blur iptal etmez
@@ -1023,7 +1516,7 @@ function initDragDrop() {
 
   function saveOrder() {
     const w = db.workouts[viewDate]; if (!w) return;
-    w.exOrder = getCards().map(c => c.dataset.exid);
+    w.exOrder = getCards().map(c => c.dataset.slot || c.dataset.exid);
     saveDB();
   }
 
@@ -1105,6 +1598,33 @@ function getPrevSets(exId, currentDate) {
   return null;
 }
 
+// Çift artış kuralı: son seansta tüm çalışma setleri tekrar aralığının üst sınırına ulaştıysa
+// (ve zorlanma kaydı 9'un altındaysa) bir sonraki seans için ağırlık artışı öner.
+function suggestIncrease(ex, prevSets) {
+  const hi = ex && ex.repHi;
+  if (!hi || !prevSets) return null;
+  const work = prevSets.filter(s => !s.isDS && parseFloat(s.kg) > 0 && parseFloat(s.reps) > 0);
+  if (!work.length) return null;
+  if (!work.every(s => parseFloat(s.reps) >= hi)) return null;
+  if (work.some(s => parseFloat(s.rpe) >= 9)) return null;
+  return { inc: 2.5, hi };
+}
+
+function fillFromPrev(d, e, inc) {
+  flushPending();
+  const w = db.workouts[d]; if (!w || w.completed || !w.sets[e]) return;
+  const prev = getPrevSets(e, d); if (!prev) return;
+  const fmt = n => String(Math.round(n * 100) / 100);
+  w.sets[e].forEach((s, i) => {
+    if (s.kg !== '' && s.kg !== undefined) return;       // yazdığın değere dokunma
+    const p = prev[Math.min(i, prev.length - 1)];
+    const kg = parseFloat(p && p.kg); if (!kg) return;
+    s.kg = fmt(kg + (inc || 0));
+  });
+  saveDB(); renderToday();
+  showToast(inc ? `+${String(inc).replace('.', ',')} kg ile dolduruldu` : 'Geçen seans dolduruldu');
+}
+
 function getPrevDate(exId, currentDate) {
   const keys = Object.keys(db.workouts).filter(d => d < currentDate).sort().reverse();
   for (const k of keys) {
@@ -1121,6 +1641,50 @@ function getPrevNote(exId, currentDate) {
     if (note && note.trim()) return note;
   }
   return null;
+}
+
+// ═══════════════════════════════════════════════
+// HAFTALIK ÖZET (Pazartesi-Pazar)
+// ═══════════════════════════════════════════════
+function getGoal() {
+  const g = db.settings ? parseInt(db.settings.weeklyGoal) : NaN;
+  return g >= 1 && g <= 7 ? g : 3;
+}
+function setGoal(n) {
+  if (!db.settings) db.settings = {};
+  db.settings.weeklyGoal = Math.min(7, Math.max(1, getGoal() + n));
+  saveDB(); renderSettings(); renderWeekStrip();
+}
+function weekSessions(offset) {
+  const t = parseDate(todayStr());
+  const mon = new Date(t); mon.setDate(t.getDate() - ((t.getDay() + 6) % 7) + offset * 7);
+  const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+  const a = dateStr(mon), b = dateStr(sun);
+  return Object.keys(db.workouts).filter(d => d >= a && d <= b && db.workouts[d].completed).sort().map(d => {
+    const w = db.workouts[d];
+    const vol = Object.values(w.sets || {}).reduce((acc, arr) => acc + arr.reduce((x, r) => x + (parseFloat(r.kg) || 0) * (parseFloat(r.reps) || 0), 0), 0);
+    return { date: d, type: (PROGRAM[w.dayIdx] || {}).type || 'rest', vol };
+  });
+}
+function renderWeekStrip() {
+  const el = document.getElementById('weekStrip'); if (!el) return;
+  const cur = weekSessions(0), prev = weekSessions(-1), goal = getGoal();
+  let plates = '';
+  for (let i = 0; i < Math.max(goal, cur.length); i++)
+    plates += i < cur.length ? `<i class="plate t-${cur[i].type}"></i>` : `<i class="plate empty"></i>`;
+  const main = cur.length >= goal ? `Haftalık hedef tamam · ${cur.length}/${goal}` : `Bu hafta ${cur.length}/${goal} seans`;
+  let sub = `Hedef: haftada ${goal} antrenman`;
+  if (cur.length) {
+    const avg = a => a.reduce((x, y) => x + y.vol, 0) / a.length;
+    if (prev.length && avg(prev) > 0) {
+      const pct = Math.round((avg(cur) / avg(prev) - 1) * 100);
+      sub = pct === 0 ? 'Hacim geçen haftayla aynı'
+        : `Geçen haftaya göre hacim <span class="${pct > 0 ? 'up' : 'down'}">%${Math.abs(pct)} ${pct > 0 ? 'yüksek' : 'düşük'}</span>`;
+    } else {
+      sub = `Toplam hacim ${(cur.reduce((x, y) => x + y.vol, 0) / 1000).toLocaleString('tr-TR', { maximumFractionDigits: 1 })} ton`;
+    }
+  }
+  el.innerHTML = `<div class="week-strip"><div class="week-plates">${plates}</div><div class="week-text"><div class="ws-main">${main}</div><div class="ws-sub">${sub}</div></div></div>`;
 }
 
 // ═══════════════════════════════════════════════
@@ -1317,9 +1881,10 @@ function renderProgress() {
     `<button class="prog-filter-btn${progFilter===f.id?' active':''}" onclick="setProgFilter('${f.id}')">${f.label}</button>`
   ).join('')}</div>
   <div class="prog-tabs">
-    <button class="prog-tab${progTab==='muscle'?' active':''}" onclick="setProgTab('muscle')">Vücut Haritası</button>
+    <button class="prog-tab${progTab==='muscle'?' active':''}" onclick="setProgTab('muscle')">Harita</button>
     <button class="prog-tab${progTab==='volume'?' active':''}" onclick="setProgTab('volume')">Hacim</button>
     <button class="prog-tab${progTab==='maxkg'?' active':''}" onclick="setProgTab('maxkg')">Max Kilo</button>
+    <button class="prog-tab${progTab==='records'?' active':''}" onclick="setProgTab('records')">Rekorlar</button>
   </div>`;
 
   // Vücut haritası sekmesi
@@ -1328,10 +1893,22 @@ function renderProgress() {
     return;
   }
 
+  if (progTab === 'records') {
+    content.innerHTML = html + renderRecords(exHistory);
+    return;
+  }
+
   const seenEx = new Set();
-  PROGRAM.filter(p => p.type !== 'rest').forEach(prog => {
+  const groups = PROGRAM.filter(p => p.type !== 'rest').map(p => ({ name: p.name, type: p.type, list: flatEx(p) }));
+  PROGRAM.forEach(p => flatEx(p).forEach(e => seenEx.add('_' + e.id)));
+  if (progFilter === 'all') {
+    const extra = Object.keys(exHistory).filter(id => !seenEx.has('_' + id)).map(id => ({ id, name: exName(id) }));
+    if (extra.length) groups.push({ name: 'Programda olmayanlar', type: 'rest', list: extra });
+  }
+  seenEx.clear();
+  groups.forEach(prog => {
     if (progFilter !== 'all' && prog.type !== progFilter) return;
-    const exs = prog.exercises.filter(ex => {
+    const exs = prog.list.filter(ex => {
       if (seenEx.has(ex.id)) return false;
       seenEx.add(ex.id);
       return !!exHistory[ex.id];
@@ -1407,6 +1984,39 @@ function renderProgress() {
   content.innerHTML = html;
 }
 
+function renderRecords(exHistory) {
+  const typeOf = {}, nameOf = {};
+  PROGRAM.filter(p => progFilter === 'all' || p.type === progFilter).forEach(p => flatEx(p).forEach(ex => {
+    if (!(ex.id in nameOf)) { nameOf[ex.id] = ex.name; typeOf[ex.id] = p.type; }
+  }));
+  if (progFilter === 'all') Object.keys(exHistory).forEach(id => { if (!(id in nameOf)) { nameOf[id] = exName(id); typeOf[id] = 'rest'; } });
+  const rows = [];
+  Object.keys(nameOf).forEach(id => {
+    const hist = exHistory[id]; if (!hist) return;
+    let best = null;
+    hist.forEach(h => h.sets.forEach(s => {
+      const kg = parseFloat(s.kg), r = parseFloat(s.reps);
+      if (!(kg > 0 && r > 0)) return;
+      const e1 = kg * (1 + r / 30);
+      if (!best || e1 > best.e1 + 1e-9) best = { e1, kg, reps: r, date: h.date };
+    }));
+    if (best) rows.push({ id, best, isNew: hist.length > 1 && best.date === hist[hist.length - 1].date });
+  });
+  if (!rows.length) return `<div class="empty-state"><div class="empty-text">Bu filtrede henüz kayıt yok.</div></div>`;
+  rows.sort((a, b) => b.best.date.localeCompare(a.best.date) || b.best.e1 - a.best.e1);
+  const num = n => String(Math.round(n * 10) / 10);
+  return `<div class="rec-note">Tahmini tek tekrar maksimumun (1RM). En yeni rekor en üstte.</div>
+  <div class="rec-card">${rows.map(r => `
+    <div class="rec-row t-${typeOf[r.id]}">
+      <i class="plate" style="--s:22px"></i>
+      <div class="rec-main">
+        <div class="rec-name">${nameOf[r.id]}</div>
+        <div class="rec-sub">${num(r.best.kg)} kg × ${num(r.best.reps)} · ${fmtShort(r.best.date)}</div>
+      </div>
+      <div class="rec-right">${r.isNew ? '<div class="rec-new">Yeni</div>' : ''}<div class="rec-val">${num(r.best.e1)}<small>kg</small></div></div>
+    </div>`).join('')}</div>`;
+}
+
 function setProgFilter(f) { progFilter = f; renderProgress(); }
 function setProgTab(t) { progTab = t; muscleWeekOffset = 0; renderProgress(); }
 
@@ -1427,12 +2037,19 @@ const MUSCLE_MAP = {
   mid_back:    { label:'Orta Sırt',   exIds:['cable_row_v','single_arm_row','chest_row_machine','wide_cable_row'], color:'#4F88F2' },
   biceps:      { label:'Biceps',      exIds:['zbar_curl','hammer_curl','incline_db_curl','biceps_curl'], color:'#4F88F2' },
   forearm:     { label:'Ön Kol',      exIds:['reverse_zbar'], color:'#4F88F2' },
-  quad:        { label:'Quadriceps',  exIds:['leg_press','leg_extension','smith_squat'], color:'#2FB872' },
-  hamstring:   { label:'Hamstring',   exIds:['seated_leg_curl','lying_leg_curl','rdl','deadlift'], color:'#2FB872' },
+  quad:        { label:'Quadriceps',  exIds:['leg_press','leg_extension','smith_squat','bulgarian_split_squat'], color:'#2FB872' },
+  hamstring:   { label:'Hamstring',   exIds:['seated_leg_curl','lying_leg_curl','rdl','deadlift','trap_bar_deadlift'], color:'#2FB872' },
   glute:       { label:'Kalça',       exIds:['hip_thrust'], color:'#2FB872' },
   adductor:    { label:'İç Bacak',    exIds:['hip_adduction'], color:'#2FB872' },
   calf:        { label:'Baldır',      exIds:['calf_raise','calf_abs'], color:'#2FB872' },
 };
+
+function muscleOf(id) {
+  const o = db.exMuscle && db.exMuscle[id];
+  if (o !== undefined) return o === 'none' ? null : o;
+  for (const m in MUSCLE_MAP) if (MUSCLE_MAP[m].exIds.includes(id)) return m;
+  return null;
+}
 
 function getWeekRange(offset) {
   const now = new Date();
@@ -1454,12 +2071,11 @@ function getMuscleVolumes(offset) {
   Object.keys(db.workouts).forEach(ds => {
     if (ds < start || ds > end) return;
     const w = db.workouts[ds]; if (!w.sets) return;
-    Object.keys(MUSCLE_MAP).forEach(muscleId => {
-      MUSCLE_MAP[muscleId].exIds.forEach(exId => {
-        const sets = w.sets[exId] || [];
-        sets.forEach(s => {
-          vols[muscleId] += (parseFloat(s.kg)||0) * (parseFloat(s.reps)||0);
-        });
+    Object.keys(w.sets).forEach(exId => {
+      const muscleId = muscleOf(exId);
+      if (!muscleId || !(muscleId in vols)) return;
+      (w.sets[exId] || []).forEach(s => {
+        vols[muscleId] += (parseFloat(s.kg)||0) * (parseFloat(s.reps)||0);
       });
     });
   });
@@ -1627,6 +2243,18 @@ function renderSettings() {
       <span style="font-family:var(--display);font-weight:800;font-size:34px;line-height:1;color:var(--text)">${total}</span>
     </div>
     <div class="set-row">
+      <div><div class="set-label">Haftalık hedef</div><div class="set-sub">Bugün ekranındaki özet için</div></div>
+      <div class="stepper"><button class="btn-icon" onclick="setGoal(-1)" aria-label="Azalt">−</button><span class="stepper-val">${getGoal()}</span><button class="btn-icon" onclick="setGoal(1)" aria-label="Artır">+</button></div>
+    </div>
+    <div class="set-row">
+      <div><div class="set-label">Dinlenme süresi</div><div class="set-sub">Antrenmandaki saat simgesine basınca başlar</div></div>
+      <div class="stepper"><button class="btn-icon" onclick="setRestSec(-15)" aria-label="Azalt">−</button><span class="stepper-val" style="min-width:56px">${fmtRestSec(getRestSec())}</span><button class="btn-icon" onclick="setRestSec(15)" aria-label="Artır">+</button></div>
+    </div>
+    <div class="set-row">
+      <div><div class="set-label">Set işaretlenince başlat</div><div class="set-sub">Sayaç kendiliğinden açılır</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="toggleRestAuto()">${db.settings && db.settings.restAuto ? 'Açık' : 'Kapalı'}</button>
+    </div>
+    <div class="set-row">
       <div><div class="set-label">Veri Boyutu</div><div class="set-sub">${sizeKB} KB kullanılıyor</div></div>
     </div>
   </div>
@@ -1649,11 +2277,15 @@ function renderSettings() {
 
   <div class="set-sec-title">Program</div>
   <div class="set-section">
-    ${PROGRAM.map(p => `
-    <div class="set-row">
-      <div><div class="set-label">${p.name}</div><div class="set-sub">${p.desc}</div></div>
-      <span class="tag tag-${p.type}"><i class="plate"></i>${{push:'Push',pull:'Pull',legs:'Legs',full:'Full Body'}[p.type] || p.type}</span>
+    ${PROGRAM.map((p, i) => `
+    <div class="set-row" onclick="openDayEditor(${i})" style="cursor:pointer">
+      <div><div class="set-label">${p.name}</div><div class="set-sub">${p.exercises.length} hareket · ${p.desc}</div></div>
+      <span style="display:flex;align-items:center;gap:8px"><span class="tag tag-${p.type}"><i class="plate"></i>${{push:'Push',pull:'Pull',legs:'Legs',full:'Full Body'}[p.type] || p.type}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
     </div>`).join('')}
+    <div class="set-row">
+      <div><div class="set-label">Programı varsayılana döndür</div><div class="set-sub">Yaptığın düzenlemeler silinir, geçmiş kayıtların kalır</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="resetProgram()">Sıfırla</button>
+    </div>
   </div>
   <input type="file" id="importFile" accept=".json" style="display:none" onchange="handleImport(event)">
   <div style="height:24px;"></div>`;
@@ -1675,7 +2307,7 @@ function handleImport(e) {
     try {
       const imp = JSON.parse(ev.target.result);
       if (!imp.workouts) throw new Error();
-      db = imp; saveDB(); renderSettings();
+      db = imp; normalizeDB(); saveDB(); renderSettings(); renderToday();
       showToast('Veriler yüklendi ✓');
     } catch { showToast('Hata: Geçersiz dosya'); }
   };
@@ -1693,7 +2325,7 @@ function clearAllModal() {
 }
 
 function clearAll() {
-  db = { workouts: {} }; saveDB(); closeModal(); renderSettings();
+  db = { workouts: {} }; normalizeDB(); saveDB(); closeModal(); renderSettings(); renderToday();
   showToast('Tüm veriler silindi');
 }
 
