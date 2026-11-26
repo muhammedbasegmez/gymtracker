@@ -2288,6 +2288,7 @@ function renderSettings() {
     </div>
   </div>
   <input type="file" id="importFile" accept=".json" style="display:none" onchange="handleImport(event)">
+  <div style="margin:18px 6px 0;font-size:11.5px;color:var(--text3);line-height:1.5;">Ekran bilgisi: sayfa ${window.innerHeight} · ekran ${screen.height} · gövde ${Math.round(document.body.getBoundingClientRect().height)} · ana ekran ${window.navigator.standalone === true ? 'evet' : 'hayır'} · sürüm v13</div>
   <div style="height:24px;"></div>`;
 }
 
