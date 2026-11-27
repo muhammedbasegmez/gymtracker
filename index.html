@@ -128,20 +128,21 @@ button{font-family:var(--sans);}
 .fb-btn.fin{background:var(--green-dim);border-color:var(--green-border);color:var(--green);}
 .exercise-card{scroll-margin-top:calc(env(safe-area-inset-top, 0px) + 64px + 64px);}
 .exercise-card.active{border-color:color-mix(in srgb,var(--c,var(--accent)) 60%,transparent);}
+.ex-chk{flex:none;min-width:40px;height:40px;padding:0 8px;border-radius:20px;background:var(--card2);border:1.5px solid var(--border);color:var(--text3);display:inline-flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:16px;font-variant-numeric:tabular-nums;cursor:pointer;transition:background .12s,border-color .12s;}
+.ex-chk:active{transform:scale(.94);}
+.ex-chk.part{color:var(--c,var(--accent));border-color:color-mix(in srgb,var(--c,var(--accent)) 55%,transparent);}
+.ex-chk.done{background:var(--c,var(--accent));border-color:var(--c,var(--accent));color:#121314;}
+.exercise-card.alldone .exercise-name{color:var(--text2);}
 .ex-count{flex:none;font-family:var(--display);font-weight:700;font-size:20px;color:var(--text3);font-variant-numeric:tabular-nums;padding:0 4px;}
 .ex-count.full{color:var(--green);display:inline-flex;align-items:center;}
 .exercise-card.collapsed .exercise-header{padding:11px 12px 11px 6px;cursor:pointer;}
 .exercise-card.collapsed .exercise-name{font-size:19px;color:var(--text2);}
-.exercise-card.collapsed.alldone .exercise-name{color:var(--text3);}
 .exercise-card.collapsed .prev-banner,.exercise-card.collapsed .exercise-note-wrap,.exercise-card.collapsed .set-header,.exercise-card.collapsed .sets-container,.exercise-card.collapsed .add-set-row,.exercise-card.collapsed .pr-badge,.exercise-card.collapsed .note-btn{display:none !important;}
 .exercise-card.collapsed.card-pr,.exercise-card.collapsed.card-drop{border-left-width:1px;border-left-color:var(--border);}
-.set-chk{flex:none;width:46px;height:54px;border-radius:16px;background:var(--card2);border:1.5px solid var(--border);color:var(--text3);opacity:.9;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .12s,border-color .12s;}
-.set-chk:active{transform:scale(.94);}
-.set-row.done .set-chk{background:var(--c,var(--accent));border-color:var(--c,var(--accent));color:#121314;opacity:1;}
 .set-row.done .set-input,.set-row.done .rpe-btn{background:color-mix(in srgb,var(--c,var(--accent)) 12%,var(--card2));}
 .set-row .set-del-btn{min-width:26px;}
 .set-col-label{font-size:13px;color:var(--text2);}
-.col-del{min-width:26px;}.col-chk{min-width:46px;}
+.col-del{min-width:26px;}
 .set-header,.sets-container .set-row{gap:6px;}
 
 
@@ -664,7 +665,7 @@ function pickAlt(d, slot, optId) {
   }
   if (!w.alt) w.alt = {};
   w.alt[slot] = optId;
-  if (window._activeEx === cur) window._activeEx = optId;
+  if (window._open && window._open.ids.has(cur)) { window._open.ids.delete(cur); window._open.ids.add(optId); }
   saveDB(); renderToday();
 }
 const RPE_VALUES = [10, 9.5, 9, 8.5, 8, 7.5, 7, 6.5, 6];
@@ -882,12 +883,12 @@ function renderToday() {
     </div>
   </div>
   ${done ? `<div class="done-note"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Antrenman tamamlandı ve kilitlendi. Düzenlemek için kilidi aç.</span></div>` : ''}
-  ${done ? '' : focusBarHtml(orderedExercises, w)}
+  ${done ? '' : focusBarHtml(orderedExercises, w, getOpenIds(orderedExercises, w))}
   <div id="exListContainer" class="t-${prog.type}">`;
 
-  const focus = !done && focusOn();
-  const activeId = focus ? getActiveEx(orderedExercises, w) : null;
-  orderedExercises.forEach(ex => { html += renderExCard(ex, viewDate, w, done, focus, activeId); });
+  const collapsible = !done;
+  const openIds = collapsible ? getOpenIds(orderedExercises, w) : null;
+  orderedExercises.forEach(ex => { html += renderExCard(ex, viewDate, w, done, collapsible, openIds); });
   html += `</div>`;
 
   html += `<button class="complete-btn ${done ? 'done' : ''}" onclick="toggleComplete('${viewDate}')">
@@ -901,10 +902,10 @@ function renderToday() {
   updateRestUI();
 }
 
-function renderExCard(ex, dateS, w, locked = false, focus = false, activeId = null) {
+function renderExCard(ex, dateS, w, locked = false, collapsible = false, openIds = null) {
   const sets = w.sets[ex.id] || [];
   const nDone = sets.filter(x => x.done).length;
-  const collapsed = focus && ex.id !== activeId;
+  const collapsed = collapsible && !openIds.has(ex.id);
   const allDone = sets.length > 0 && nDone === sets.length;
   const prevSets = getPrevSets(ex.id, dateS);
   const prevDate = getPrevDate(ex.id, dateS);
@@ -937,7 +938,6 @@ function renderExCard(ex, dateS, w, locked = false, focus = false, activeId = nu
     <div class="set-col-label col-kg">kg</div>
     <div class="set-col-label col-reps">tekrar</div>
     <div class="set-col-label col-rpe">RPE</div>
-    ${locked ? '' : '<div class="col-chk"></div>'}
     <div class="col-del"></div>
   </div>`;
 
@@ -1016,7 +1016,6 @@ function renderExCard(ex, dateS, w, locked = false, focus = false, activeId = nu
         <button class="rpe-btn${set.rpe === '' ? ' empty' : ''}" ${dis}
           onclick="openRpePicker('${dateS}','${ex.id}',${i})">${set.rpe !== '' ? set.rpe : '—'}</button>
       </div>
-      ${locked ? '' : `<button class="set-chk" aria-label="Seti işaretle" onclick="toggleSetDone('${dateS}','${ex.id}',${i})"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>`}
       <button class="set-del-btn" ${dis} onclick="deleteSet('${dateS}','${ex.id}',${i})">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -1041,7 +1040,7 @@ function renderExCard(ex, dateS, w, locked = false, focus = false, activeId = nu
     ? `<div class="alt-row">${slotEx.opts.map(o => `<button class="alt-chip${o.id === ex.id ? ' on' : ''}" onclick="pickAlt('${dateS}','${ex.slotId}','${o.id}')">${o.name}</button>`).join('')}</div>`
     : '';
   return `
-  <div class="exercise-card ${cardClass}${collapsed ? ' collapsed' : ''}${focus && !collapsed ? ' active' : ''}${collapsed && allDone ? ' alldone' : ''}" id="exc_${ex.id}" data-exid="${ex.id}" data-slot="${ex.slotId || ex.id}">
+  <div class="exercise-card ${cardClass}${collapsible ? ' collapsible' : ''}${collapsed ? ' collapsed' : ''}${collapsible && !collapsed ? ' active' : ''}${allDone ? ' alldone' : ''}" id="exc_${ex.id}" data-exid="${ex.id}" data-slot="${ex.slotId || ex.id}">
     <div class="exercise-header" onclick="hdrTap(event,'${ex.id}')">
       <div class="drag-handle" title="Sırayı değiştir">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1058,7 +1057,6 @@ function renderExCard(ex, dateS, w, locked = false, focus = false, activeId = nu
       </div>
       <div class="exercise-hdr-actions">
         ${prBadge}
-        ${collapsed ? (allDone ? '<span class="ex-count full"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>' : `<span class="ex-count">${nDone}/${sets.length}</span>`) : ''}
         <button class="btn-icon note-btn" onclick="toggleNote('${ex.id}')" title="Not">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
             stroke="${noteValue ? 'var(--accent)' : 'currentColor'}" stroke-width="2">
@@ -1066,6 +1064,7 @@ function renderExCard(ex, dateS, w, locked = false, focus = false, activeId = nu
             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
           </svg>
         </button>
+        ${locked ? '' : `<button class="ex-chk${allDone ? ' done' : (nDone ? ' part' : '')}" aria-label="Hareketi tamamla" onclick="toggleExDone(event,'${dateS}','${ex.id}')">${allDone ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' : (nDone ? nDone + '/' + sets.length : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>')}</button>`}
       </div>
     </div>
     ${altRow}
@@ -1247,79 +1246,70 @@ function resetProgram() {
 // ═══════════════════════════════════════════════
 // ODAK MODU · SET ONAYI · DİNLENME SAYACI
 // ═══════════════════════════════════════════════
-function focusOn() { return !(db.settings && db.settings.focus === false); }
-function setFocus(v) {
-  flushPending();
-  if (!db.settings) db.settings = {};
-  db.settings.focus = v; saveDB(); window._activeEx = null; renderToday();
-}
-function getActiveEx(list, w) {
-  const open = ex => (w.sets[ex.id] || []).some(x => !x.done);
-  const cur = list.find(ex => ex.id === window._activeEx);
-  if (cur && w.dayIdx === window._activeDay && viewDate === window._activeDate) return cur.id;
-  const nxt = list.find(open);
-  window._activeEx = nxt ? nxt.id : null;
-  window._activeDay = w.dayIdx; window._activeDate = viewDate;
-  return window._activeEx;
+// Açık/kapalı kartlar: oturum boyunca bellekte, uygulama yeniden açılınca ilk bitmemiş hareket açık gelir
+function getOpenIds(list, w) {
+  const key = viewDate + '|' + w.dayIdx;
+  if (!window._open || window._open.key !== key) {
+    const first = list.find(ex => !((w.sets[ex.id] || []).length && (w.sets[ex.id] || []).every(x => x.done)));
+    window._open = { key, ids: new Set(first ? [first.id] : []) };
+  }
+  return window._open.ids;
 }
 function hdrTap(ev, id) {
   const card = document.getElementById('exc_' + id);
-  if (!card || !card.classList.contains('collapsed')) return;
-  if (ev.target.closest('.drag-handle')) return;
+  if (!card || !card.classList.contains('collapsible')) return;
+  if (ev.target.closest('.drag-handle, .ex-chk, .btn-icon')) return;
   flushPending();
-  window._activeEx = id; window._activeDate = viewDate; window._activeDay = selectedProgIdx;
+  const w = db.workouts[viewDate]; if (!w) return;
+  const ids = getOpenIds(sessionExercises(PROGRAM[w.dayIdx], w), w);
+  if (ids.has(id)) ids.delete(id); else ids.add(id);
   renderToday();
-  scrollToEx(id);
 }
-function scrollToEx(id) {
-  requestAnimationFrame(() => {
-    const el = document.getElementById('exc_' + id);
-    if (el) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
-  });
+function toggleAllOpen() {
+  flushPending();
+  const w = db.workouts[viewDate]; if (!w) return;
+  const list = sessionExercises(PROGRAM[w.dayIdx], w);
+  const ids = getOpenIds(list, w);
+  if (list.every(ex => ids.has(ex.id))) ids.clear(); else list.forEach(ex => ids.add(ex.id));
+  renderToday();
 }
-function focusBarHtml(list, w) {
-  const all = list.reduce((a, ex) => a.concat(w.sets[ex.id] || []), []);
-  const dn = all.filter(x => x.done).length;
+function focusBarHtml(list, w, openIds) {
   const exDone = list.filter(ex => (w.sets[ex.id] || []).length && (w.sets[ex.id] || []).every(x => x.done)).length;
-  const pct = all.length ? Math.round(dn / all.length * 100) : 0;
+  const pct = list.length ? Math.round(exDone / list.length * 100) : 0;
   const prog = PROGRAM[w.dayIdx];
-  const f = focusOn();
+  const allOpen = list.length > 0 && list.every(ex => openIds.has(ex.id));
   return `<div class="focus-bar t-${prog ? prog.type : 'full'}">
-    <div class="fb-main"><div class="fb-text"><b>${dn}</b>/${all.length} set · ${exDone}/${list.length} hareket</div><div class="fb-track"><i style="width:${pct}%"></i></div></div>
+    <div class="fb-main"><div class="fb-text"><b>${exDone}</b>/${list.length} hareket</div><div class="fb-track"><i style="width:${pct}%"></i></div></div>
     <button class="fb-btn" id="restBtn" onclick="restTap()" aria-label="Dinlenme sayacı"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><polyline points="12 9 12 13 14.5 14.5"/><path d="M9.5 2.5h5"/></svg><span id="restTxt"></span></button>
-    <button class="fb-btn${f ? ' on' : ''}" onclick="setFocus(${!f})" aria-label="${f ? 'Tüm hareketleri göster' : 'Odak moduna geç'}" title="${f ? 'Tümünü göster' : 'Odak modu'}">${f
-      ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>'
-      : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>'}</button>
+    <button class="fb-btn on" onclick="toggleAllOpen()" aria-label="${allOpen ? 'Hepsini kapat' : 'Hepsini aç'}" title="${allOpen ? 'Hepsini kapat' : 'Hepsini aç'}">${allOpen
+      ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 4 12 9 17 4"/><polyline points="7 20 12 15 17 20"/></svg>'
+      : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 9 12 4 17 9"/><polyline points="7 15 12 20 17 15"/></svg>'}</button>
   </div>`;
 }
-function toggleSetDone(d, e, i) {
+// Hareketi tek dokunuşla tamamla / geri al
+function toggleExDone(ev, d, id) {
+  if (ev) ev.stopPropagation();
   flushPending();
-  const w = db.workouts[d]; const s = w && w.sets[e] && w.sets[e][i];
-  if (!s || w.completed) return;
-  s.done = !s.done;
-  if (s.done) {
+  const w = db.workouts[d]; const arr = w && w.sets[id];
+  if (!arr || !arr.length || w.completed) return;
+  const all = arr.every(x => x.done);
+  if (all) {
+    arr.forEach(x => { x.done = false; });
+  } else {
     // Silik (hayalet) kg varsa ve boşsa, yapılan kg olarak kabul et
-    const p = getPrevSets(e, d);
-    if ((s.kg === '' || s.kg === undefined) && p && p.length) {
-      const q = p[Math.min(i, p.length - 1)];
-      if (q && q.kg !== '' && q.kg !== undefined) s.kg = q.kg;
-    }
+    const p = getPrevSets(id, d);
+    arr.forEach((x, i) => {
+      if ((x.kg === '' || x.kg === undefined) && p && p.length) {
+        const q = p[Math.min(i, p.length - 1)];
+        if (q && q.kg !== '' && q.kg !== undefined) x.kg = q.kg;
+      }
+      x.done = true;
+    });
+    if (window._open && window._open.key === d + '|' + w.dayIdx) window._open.ids.delete(id);
     if (db.settings && db.settings.restAuto) startRest();
   }
   saveDB();
-  let advance = false;
-  if (s.done && focusOn() && window._activeEx === e && w.sets[e].every(x => x.done)) {
-    const lst = sessionExercises(PROGRAM[w.dayIdx], w);
-    const k = lst.findIndex(x => x.id === e);
-    const open = id => (w.sets[id] || []).some(x => !x.done);
-    const nx = lst.slice(k + 1).concat(lst.slice(0, k)).find(x => open(x.id));
-    const nxt = nx ? nx.id : null;
-    window._activeEx = nxt || null; window._activeDate = d; window._activeDay = w.dayIdx;
-    advance = true;
-    if (!nxt) showToast('Tüm hareketler tamam');
-  }
   renderToday();
-  if (advance && window._activeEx) scrollToEx(window._activeEx);
 }
 
 // Dinlenme sayacı: zaman damgasıyla çalışır, ekran kapanıp açılınca şaşmaz
