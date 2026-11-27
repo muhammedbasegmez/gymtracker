@@ -203,8 +203,11 @@ body.kb #nav{display:none;}
   transition:background .2s,border-color .2s,color .2s,transform .12s;
 }
 .day-sel-btn .plate{--s:20px;}
-.day-sel-btn:nth-child(n+6){grid-column:span 10;flex-direction:row;gap:10px;min-height:52px;}
-.day-sel-btn:nth-child(n+6) .plate{--s:18px;}
+.day-sel-btn.t-full{grid-column:span 10;flex-direction:row;gap:10px;min-height:52px;}
+.day-sel-btn.t-full .plate{--s:18px;}
+.seg{display:inline-flex;padding:3px;gap:2px;background:var(--card2);border-radius:14px;}
+.seg button{min-height:36px;padding:0 11px;white-space:nowrap;border:none;border-radius:11px;background:transparent;color:var(--text2);font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;}
+.seg button.on{background:var(--text);color:#121314;}
 .day-sel-btn:active{transform:scale(.96);}
 .day-sel-btn.on{background:color-mix(in srgb,var(--c,var(--text3)) 15%,var(--card));border-color:color-mix(in srgb,var(--c,var(--text3)) 70%,transparent);color:var(--text);}
 
@@ -755,6 +758,11 @@ function shiftDate(n) {
   renderToday();
 }
 
+function getActiveProg() { const m = db.settings && db.settings.activeProg; return m === 'ppl' || m === 'all' ? m : 'full'; }
+function setActiveProg(m) {
+  if (!db.settings) db.settings = {};
+  db.settings.activeProg = m; saveDB(); renderDaySelector(); renderSettings();
+}
 function renderDaySelector() {
   const row = document.getElementById('daySelectorRow');
   // Kısa etiketler — iPhone 11'de 5 buton yan yana sığsın
@@ -768,7 +776,12 @@ function renderDaySelector() {
     full_b: 'Full Body B',
     full_c: 'Full Body C',
   };
+  const mode = getActiveProg();
+  const w0 = db.workouts[viewDate];
+  const inMode = p => mode === 'all' || (mode === 'full' ? p.type === 'full' : p.type !== 'full');
   row.innerHTML = PROGRAM.map((p, i) => {
+    // Seçili olan veya bu güne kayıtlı gün, aktif programda olmasa da görünür kalır
+    if (!inMode(p) && i !== selectedProgIdx && !(w0 && w0.dayIdx === i)) return '';
     const active = selectedProgIdx === i;
     const cls = `day-sel-btn t-${p.type}${active ? ' on' : ''}`;
     const label = shortNames[p.id] || p.name;
@@ -2273,6 +2286,10 @@ function renderSettings() {
 
   <div class="set-sec-title">Program</div>
   <div class="set-section">
+    <div class="set-row">
+      <div><div class="set-label">Aktif program</div><div class="set-sub">Bugün ekranında hangi günler görünsün</div></div>
+      <div class="seg">${[['full', 'Full Body'], ['ppl', 'PPL'], ['all', 'Hepsi']].map(([k, l]) => `<button class="${getActiveProg() === k ? 'on' : ''}" onclick="setActiveProg('${k}')">${l}</button>`).join('')}</div>
+    </div>
     ${PROGRAM.map((p, i) => `
     <div class="set-row" onclick="openDayEditor(${i})" style="cursor:pointer">
       <div><div class="set-label">${p.name}</div><div class="set-sub">${p.exercises.length} hareket · ${p.desc}</div></div>
